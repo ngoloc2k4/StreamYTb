@@ -1,0 +1,28 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Center container rounded badge -->
+    <path
+        android:pathData="M33,26h42c5.5,0 10,4.5 10,10v36c0,5.5 -4.5,10 -10,10h-42c-5.5,0 -10,-4.5 -10,-10v-36c0,-5.5 4.5,-10 10,-10z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:angle="45"
+                android:endColor="#FF0033"
+                android:startColor="#FF416C"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Play triangle icon in center -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,41.5l18,12.5 -18,12.5z" />
+
+    <!-- Audio waveform indicator on bottom edge of the badge -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M37,70h3v4h-3zM43,67h3v7h-3zM62,67h3v7h-3zM68,70h3v4h-3z" />
+</vector>

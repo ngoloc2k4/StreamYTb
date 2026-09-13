@@ -1,0 +1,6 @@
+{
+  "name": "StreamYTb",
+  "description": "Open-source client for YouTube & YouTube Music with background playback, local subscription manager, and privacy-first local recommendation engine.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
