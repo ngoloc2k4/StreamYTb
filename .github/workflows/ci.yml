@@ -7,6 +7,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,3 +35,39 @@ jobs:
       run: |
         echo "=== Generated APKs ==="
         find app/build/outputs/apk -name "*.apk" -exec ls -lh {} +
+
+    - name: Upload APK Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: streamytb-apks
+        path: |
+          app/build/outputs/apk/release/app-release.apk
+          app/build/outputs/apk/debug/app-debug.apk
+
+    - name: Publish Beta Release
+      uses: softprops/action-gh-release@v2
+      if: github.ref == 'refs/heads/main'
+      with:
+        tag_name: v1.0.0-beta
+        name: "StreamYTb v1.0.0-beta (Official Beta)"
+        draft: false
+        prerelease: true
+        body: |
+          ## 🚀 StreamYTb v1.0.0 Beta Release
+
+          Bản phát hành Beta chính thức của **StreamYTb** - Ứng dụng xem video & nghe nhạc YouTube không quảng cáo, hoạt động độc lập không cần Google Play Services.
+
+          ### 📦 File Tải Về:
+          * **`app-release.apk` (~13 MB):** Bản phát hành chính thức, tối ưu hóa kích thước bằng R8 & ProGuard (< 15MB tiêu chuẩn).
+          * **`app-debug.apk` (~31 MB):** Bản debug có đầy đủ ký hiệu gỡ lỗi.
+
+          ### ✨ Tính Năng Nổi Bật:
+          * **Android 6.0+ (API 23+)** tương thích rộng rãi, hỗ trợ Conscrypt TLS 1.2 / TLS 1.3.
+          * **Không phụ thuộc Google Play Services / Firebase**.
+          * **InnerTube Extractor:** Giả lập iOS Client lấy luồng HLS (`.m3u8`) và Audio AAC/Opus sạch không quảng cáo, tự động fallback sang Web/Android/TV.
+          * **Media3 PlaybackService:** Hỗ trợ phát ngầm khi tắt màn hình, điều khiển media notification, chế độ chỉ nghe Audio tiết kiệm RAM (< 90MB).
+          * **Local RecSys:** Hệ thống gợi ý nội dung và lịch sử xem hoàn toàn trên máy người dùng (Room SQLite), bảo đảm quyền riêng tư 100%.
+          * **Adaptive UI:** Tối ưu hóa giao diện cho cả điện thoại (Compact) và máy tính bảng (Split Layout / NavigationRail).
+        files: |
+          app/build/outputs/apk/release/app-release.apk
+          app/build/outputs/apk/debug/app-debug.apk
