@@ -49,12 +49,17 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import coil.compose.AsyncImage
 import com.example.data.local.SubscriptionEntity
 import com.example.data.model.StreamChannel
 import com.example.data.model.StreamVideo
 import com.example.ui.components.ChannelCard
 import com.example.ui.components.VideoCard
+
+data class ChannelGroupItem(@StringRes val titleRes: Int, val id: String)
 
 @Composable
 fun SubscriptionsScreen(
@@ -67,17 +72,23 @@ fun SubscriptionsScreen(
     onImportBackup: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val groups = listOf("Tất cả", "Âm nhạc", "Lập trình", "Thư giãn", "Tin tức")
-    var selectedGroup by remember { mutableStateOf("Tất cả") }
+    val groups = listOf(
+        ChannelGroupItem(R.string.group_all, "All"),
+        ChannelGroupItem(R.string.group_music, "Âm nhạc"),
+        ChannelGroupItem(R.string.group_coding, "Lập trình"),
+        ChannelGroupItem(R.string.group_relax, "Thư giãn"),
+        ChannelGroupItem(R.string.group_news, "Tin tức")
+    )
+    var selectedGroupId by remember { mutableStateOf("All") }
     var showImportDialog by remember { mutableStateOf(false) }
     var importJsonText by remember { mutableStateOf("") }
     var showAllChannelsDialog by remember { mutableStateOf(false) }
 
     val subscribedIds = subscriptions.map { it.channelId }.toSet()
 
-    val filteredSubscriptions = remember(subscriptions, selectedGroup) {
-        if (selectedGroup == "Tất cả") subscriptions
-        else subscriptions.filter { it.customGroup == selectedGroup }
+    val filteredSubscriptions = remember(subscriptions, selectedGroupId) {
+        if (selectedGroupId == "All") subscriptions
+        else subscriptions.filter { it.customGroup == selectedGroupId }
     }
 
     val channelVideos = remember(videos, subscribedIds) {
@@ -99,7 +110,7 @@ fun SubscriptionsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Kênh Đăng Ký (${subscriptions.size})",
+                    text = stringResource(R.string.subscriptions_title, subscriptions.size),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -111,7 +122,7 @@ fun SubscriptionsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.FileDownload,
-                            contentDescription = "Xuất dữ liệu NewPipe",
+                            contentDescription = stringResource(R.string.subscriptions_export_desc),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -121,7 +132,7 @@ fun SubscriptionsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.FileUpload,
-                            contentDescription = "Nhập dữ liệu NewPipe",
+                            contentDescription = stringResource(R.string.subscriptions_import_desc),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -150,12 +161,12 @@ fun SubscriptionsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Khám phá kênh",
+                                contentDescription = stringResource(R.string.subscriptions_discover_channels),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("Khám phá", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.subscriptions_discover), style = MaterialTheme.typography.labelSmall)
                     }
                 }
 
@@ -197,9 +208,9 @@ fun SubscriptionsScreen(
             ) {
                 items(groups) { grp ->
                     FilterChip(
-                        selected = selectedGroup == grp,
-                        onClick = { selectedGroup = grp },
-                        label = { Text(grp) },
+                        selected = selectedGroupId == grp.id,
+                        onClick = { selectedGroupId = grp.id },
+                        label = { Text(stringResource(grp.titleRes)) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primary,
                             selectedLabelColor = Color.White
@@ -227,7 +238,7 @@ fun SubscriptionsScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Chưa có video mới từ các kênh theo dõi",
+                            text = stringResource(R.string.subscriptions_empty_hint),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -249,11 +260,11 @@ fun SubscriptionsScreen(
     if (showImportDialog) {
         AlertDialog(
             onDismissRequest = { showImportDialog = false },
-            title = { Text("Nhập Kênh NewPipe (JSON)") },
+            title = { Text(stringResource(R.string.subscriptions_import_dialog_title)) },
             text = {
                 Column {
                     Text(
-                        text = "Dán tệp JSON sao lưu danh sách đăng ký từ NewPipe hoặc FlowMusic:",
+                        text = stringResource(R.string.subscriptions_import_dialog_desc),
                         style = MaterialTheme.typography.bodySmall
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -263,7 +274,7 @@ fun SubscriptionsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(140.dp),
-                        placeholder = { Text("{\"subscriptions\": [...]}") }
+                        placeholder = { Text(stringResource(R.string.subscriptions_import_dialog_placeholder)) }
                     )
                 }
             },
@@ -277,12 +288,12 @@ fun SubscriptionsScreen(
                         }
                     }
                 ) {
-                    Text("Nhập ngay")
+                    Text(stringResource(R.string.subscriptions_import_dialog_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showImportDialog = false }) {
-                    Text("Hủy")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )
@@ -292,7 +303,7 @@ fun SubscriptionsScreen(
     if (showAllChannelsDialog) {
         AlertDialog(
             onDismissRequest = { showAllChannelsDialog = false },
-            title = { Text("Khám phá Kênh Đề xuất") },
+            title = { Text(stringResource(R.string.subscriptions_discover_dialog_title)) },
             text = {
                 LazyColumn(
                     modifier = Modifier
@@ -311,7 +322,7 @@ fun SubscriptionsScreen(
             },
             confirmButton = {
                 Button(onClick = { showAllChannelsDialog = false }) {
-                    Text("Xong")
+                    Text(stringResource(R.string.action_done))
                 }
             }
         )

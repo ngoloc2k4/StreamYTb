@@ -37,8 +37,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.R
 import com.example.data.model.FeedItem
 import com.example.data.model.StreamVideo
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun VideoCard(
@@ -85,7 +87,7 @@ fun VideoCard(
                             .padding(horizontal = 8.dp, vertical = 3.dp)
                     ) {
                         Text(
-                            text = feedItem.sourceReason.label,
+                            text = stringResource(feedItem.sourceReason.stringRes),
                             color = Color.White,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
@@ -105,7 +107,7 @@ fun VideoCard(
                     if (video.isAudioOnly) {
                         Icon(
                             imageVector = Icons.Default.Headphones,
-                            contentDescription = "Audio only",
+                            contentDescription = stringResource(R.string.video_audio_only),
                             tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(12.dp)
                         )

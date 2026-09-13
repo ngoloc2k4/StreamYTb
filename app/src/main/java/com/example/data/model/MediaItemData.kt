@@ -1,5 +1,8 @@
 package com.example.data.model
 
+import androidx.annotation.StringRes
+import com.example.R
+
 enum class ClientType(val label: String, val userAgent: String) {
     IOS(
         label = "iOS Mock",
@@ -90,9 +93,13 @@ data class FeedItem(
     val recScore: Double = 0.0
 )
 
-enum class FeedSourceReason(val label: String, val badgeColorHex: Long) {
-    SUBSCRIPTION("Kênh đăng ký (50%)", 0xFFFF334B),
-    INTERACTION_REC("Gợi ý từ sở thích (30%)", 0xFF8A2BE2),
-    TRENDING("Thịnh hành khu vực VN (20%)", 0xFF00B4D8),
-    MUSIC_CHARTS("Bảng xếp hạng Âm nhạc", 0xFF10B981)
+enum class FeedSourceReason(
+    @StringRes val stringRes: Int,
+    val label: String,
+    val badgeColorHex: Long
+) {
+    SUBSCRIPTION(R.string.feed_source_subscription, "Kênh đăng ký (50%)", 0xFFFF334B),
+    INTERACTION_REC(R.string.feed_source_interaction, "Gợi ý từ sở thích (30%)", 0xFF8A2BE2),
+    TRENDING(R.string.feed_source_trending, "Thịnh hành khu vực VN (20%)", 0xFF00B4D8),
+    MUSIC_CHARTS(R.string.feed_source_music_charts, "Bảng xếp hạng Âm nhạc", 0xFF10B981)
 }

@@ -36,7 +36,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.R
 import com.example.data.model.StreamChannel
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun ChannelCard(
@@ -124,7 +126,7 @@ fun ChannelCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = if (isSubscribed) "Đã đăng ký" else "Đăng ký",
+                        text = if (isSubscribed) stringResource(R.string.channel_subscribed) else stringResource(R.string.channel_subscribe),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = if (isSubscribed) MaterialTheme.colorScheme.onSurface else Color.White

@@ -42,6 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import coil.compose.AsyncImage
 import com.example.data.model.StreamVideo
 
@@ -84,7 +86,7 @@ fun MusicScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "STREAM MUSIC CORE",
+                            text = stringResource(R.string.music_hero_badge),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Black,
                             color = Color.White.copy(alpha = 0.9f),
@@ -95,7 +97,7 @@ fun MusicScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Trình phát Nhạc Nền Tối Ưu",
+                        text = stringResource(R.string.music_hero_title),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -104,7 +106,7 @@ fun MusicScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Giải mã Opus / M4A thuần túy, tiết kiệm 50% pin và RAM < 90MB khi khóa màn hình.",
+                        text = stringResource(R.string.music_hero_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.85f)
                     )
@@ -116,7 +118,7 @@ fun MusicScreen(
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Bản Phối Gợi Ý Cho Bạn",
+                    text = stringResource(R.string.music_quick_picks_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -162,7 +164,7 @@ fun MusicScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.PlayArrow,
-                                            contentDescription = "Phát",
+                                            contentDescription = stringResource(R.string.player_btn_play),
                                             tint = Color.White,
                                             modifier = Modifier.size(20.dp)
                                         )
@@ -196,7 +198,7 @@ fun MusicScreen(
         // All Music Tracks List
         item {
             Text(
-                text = "Danh Sách Bài Hát Thịnh Hành",
+                text = stringResource(R.string.music_trending_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp)

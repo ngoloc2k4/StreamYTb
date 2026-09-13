@@ -1,0 +1,50 @@
+name: Crowdin Translation Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * 0' # Every Sunday at 02:00 UTC
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/src/main/res/values/strings.xml'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  crowdin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check Crowdin Credentials
+        id: check_credentials
+        run: |
+          if [ -n "${{ secrets.CROWDIN_PROJECT_ID }}" ] && [ -n "${{ secrets.CROWDIN_PERSONAL_TOKEN }}" ]; then
+            echo "has_credentials=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_credentials=false" >> "$GITHUB_OUTPUT"
+            echo "::notice ::Crowdin credentials (CROWDIN_PROJECT_ID or CROWDIN_PERSONAL_TOKEN) not set. Skipping Crowdin synchronization."
+          fi
+
+      - name: Synchronize with Crowdin
+        if: steps.check_credentials.outputs.has_credentials == 'true'
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: true
+          create_pull_request: true
+          pull_request_title: 'i18n: Update Crowdin Community Translations'
+          pull_request_body: 'Automated pull request containing updated translations from Crowdin contributors.'
+          pull_request_base_branch_name: 'main'
+          pull_request_branch_name: 'l10n_crowdin_translations'
+          config: 'crowdin.yml'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

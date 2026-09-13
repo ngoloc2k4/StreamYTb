@@ -50,6 +50,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import com.example.ui.components.FullPlayer
 import com.example.ui.components.MiniPlayer
 import com.example.ui.components.RecSysDialog
@@ -61,7 +64,7 @@ import com.example.ui.screens.SubscriptionsScreen
 import kotlinx.coroutines.flow.collectLatest
 
 data class NavTabItem(
-    val title: String,
+    @StringRes val titleRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     val testTag: String
@@ -85,7 +88,7 @@ fun MainScreen(viewModel: MainViewModel) {
 
     LaunchedEffect(Unit) {
         viewModel.toastMessage.collectLatest { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, message.asString(context), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -99,10 +102,10 @@ fun MainScreen(viewModel: MainViewModel) {
     }
 
     val tabs = listOf(
-        NavTabItem("Trang chủ", Icons.Filled.Home, Icons.Outlined.Home, "nav_tab_home"),
-        NavTabItem("Âm nhạc", Icons.Filled.Headphones, Icons.Outlined.Headphones, "nav_tab_music"),
-        NavTabItem("Đăng ký", Icons.Filled.Subscriptions, Icons.Outlined.Subscriptions, "nav_tab_subscriptions"),
-        NavTabItem("Thư viện", Icons.Filled.LibraryMusic, Icons.Outlined.LibraryMusic, "nav_tab_library")
+        NavTabItem(R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home, "nav_tab_home"),
+        NavTabItem(R.string.nav_music, Icons.Filled.Headphones, Icons.Outlined.Headphones, "nav_tab_music"),
+        NavTabItem(R.string.nav_subscriptions, Icons.Filled.Subscriptions, Icons.Outlined.Subscriptions, "nav_tab_subscriptions"),
+        NavTabItem(R.string.nav_library, Icons.Filled.LibraryMusic, Icons.Outlined.LibraryMusic, "nav_tab_library")
     )
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -117,6 +120,7 @@ fun MainScreen(viewModel: MainViewModel) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     tabs.forEachIndexed { index, tab ->
+                        val title = stringResource(tab.titleRes)
                         NavigationRailItem(
                             selected = currentTabIndex == index,
                             onClick = {
@@ -126,10 +130,10 @@ fun MainScreen(viewModel: MainViewModel) {
                             icon = {
                                 Icon(
                                     imageVector = if (currentTabIndex == index) tab.selectedIcon else tab.unselectedIcon,
-                                    contentDescription = tab.title
+                                    contentDescription = title
                                 )
                             },
-                            label = { Text(tab.title) },
+                            label = { Text(title) },
                             modifier = Modifier.testTag(tab.testTag)
                         )
                     }
@@ -166,7 +170,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "Chọn video hoặc bài hát để bắt đầu phát",
+                                    text = stringResource(R.string.player_select_media_hint),
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -215,16 +219,17 @@ fun MainScreen(viewModel: MainViewModel) {
                                 tonalElevation = 8.dp
                             ) {
                                 tabs.forEachIndexed { index, tab ->
+                                    val title = stringResource(tab.titleRes)
                                     NavigationBarItem(
                                         selected = currentTabIndex == index,
                                         onClick = { currentTabIndex = index },
                                         icon = {
                                             Icon(
                                                 imageVector = if (currentTabIndex == index) tab.selectedIcon else tab.unselectedIcon,
-                                                contentDescription = tab.title
+                                                contentDescription = title
                                             )
                                         },
-                                        label = { Text(tab.title) },
+                                        label = { Text(title) },
                                         colors = NavigationBarItemDefaults.colors(
                                             selectedIconColor = MaterialTheme.colorScheme.primary,
                                             selectedTextColor = MaterialTheme.colorScheme.primary,

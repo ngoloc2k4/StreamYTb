@@ -68,6 +68,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -147,7 +149,7 @@ fun FullPlayer(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (playerState.isAudioOnlyMode) "ĐANG PHÁT NHẠC (TIẾT KIỆM RAM)" else "ĐANG PHÁT VIDEO",
+                        text = if (playerState.isAudioOnlyMode) stringResource(R.string.player_playing_audio_mode) else stringResource(R.string.player_playing_video_mode),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = if (playerState.isAudioOnlyMode) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
@@ -184,7 +186,7 @@ fun FullPlayer(
                             )
                             Icon(
                                 imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Chọn Client giả lập",
+                                contentDescription = stringResource(R.string.player_client_spoof_desc),
                                 modifier = Modifier.size(16.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -233,17 +235,17 @@ fun FullPlayer(
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("Trình phát") }
+                    text = { Text(stringResource(R.string.player_tab_player)) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Danh sách phát (${playerState.queue.size})") }
+                    text = { Text(stringResource(R.string.player_tab_queue, playerState.queue.size)) }
                 )
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    text = { Text("Chi tiết & Lời bài hát") }
+                    text = { Text(stringResource(R.string.player_tab_details)) }
                 )
             }
 
@@ -378,13 +380,13 @@ private fun PlayerMainContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Pure Audio Stream (M4A/Opus)",
+                        text = stringResource(R.string.player_audio_stream_title),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "RAM Usage < 90MB • Video Decoder Tắt",
+                        text = stringResource(R.string.player_audio_stream_desc),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.7f)
                     )
@@ -449,7 +451,7 @@ private fun PlayerMainContent(
                         Spacer(modifier = Modifier.width(4.dp))
                     }
                     Text(
-                        text = if (isSubscribed) "Đã đăng ký" else "Đăng ký",
+                        text = if (isSubscribed) stringResource(R.string.channel_subscribed) else stringResource(R.string.channel_subscribe),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = if (isSubscribed) MaterialTheme.colorScheme.onSurface else Color.White
@@ -505,7 +507,7 @@ private fun PlayerMainContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.SkipPrevious,
-                    contentDescription = "Bài trước",
+                    contentDescription = stringResource(R.string.player_btn_prev),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(32.dp)
                 )
@@ -517,7 +519,7 @@ private fun PlayerMainContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.FastRewind,
-                    contentDescription = "Tua lại 10s",
+                    contentDescription = stringResource(R.string.player_btn_rewind_10s),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(28.dp)
                 )
@@ -543,7 +545,7 @@ private fun PlayerMainContent(
                     } else {
                         Icon(
                             imageVector = if (playerState.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = if (playerState.isPlaying) "Tạm dừng" else "Phát",
+                            contentDescription = if (playerState.isPlaying) stringResource(R.string.player_btn_pause) else stringResource(R.string.player_btn_play),
                             tint = Color.White,
                             modifier = Modifier.size(38.dp)
                         )
@@ -557,7 +559,7 @@ private fun PlayerMainContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.FastForward,
-                    contentDescription = "Tua tới 10s",
+                    contentDescription = stringResource(R.string.player_btn_forward_10s),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(28.dp)
                 )
@@ -569,7 +571,7 @@ private fun PlayerMainContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.SkipNext,
-                    contentDescription = "Bài tiếp theo",
+                    contentDescription = stringResource(R.string.player_btn_next),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(32.dp)
                 )
@@ -620,7 +622,7 @@ private fun PlayerMainContent(
                 selected = playerState.isAudioOnlyMode,
                 onClick = onToggleAudioMode,
                 label = {
-                    Text(if (playerState.isAudioOnlyMode) "Chỉ nghe Audio (90MB RAM)" else "Video bật")
+                    Text(if (playerState.isAudioOnlyMode) stringResource(R.string.player_audio_chip_on) else stringResource(R.string.player_audio_chip_off))
                 },
                 leadingIcon = {
                     Icon(
@@ -651,7 +653,7 @@ private fun QueueTabContent(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Danh sách phát trống",
+                text = stringResource(R.string.player_queue_empty),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -707,7 +709,7 @@ private fun QueueTabContent(
                         if (isCurrent) {
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Đang phát",
+                                contentDescription = stringResource(R.string.player_btn_play),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -734,26 +736,26 @@ private fun DetailsTabContent(media: StreamVideo) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Kênh: ${media.channelTitle} | ${media.viewCountText} | ${media.publishedText}",
+                text = stringResource(R.string.player_channel_info, media.channelTitle, media.viewCountText, media.publishedText),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Mô tả nội dung",
+                text = stringResource(R.string.player_description_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = media.description.ifEmpty { "Không có mô tả chi tiết." },
+                text = media.description.ifEmpty { stringResource(R.string.player_no_description) },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Thẻ nội dung (Tags & RecSys Triggers)",
+                text = stringResource(R.string.player_tags_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface

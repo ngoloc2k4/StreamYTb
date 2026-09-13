@@ -3,6 +3,7 @@ package com.example.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.R
 import com.example.data.local.SubscriptionEntity
 import com.example.data.local.UserPreferenceEntity
 import com.example.data.local.WatchHistoryEntity
@@ -45,8 +46,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _isFullPlayerExpanded = MutableStateFlow(false)
     val isFullPlayerExpanded: StateFlow<Boolean> = _isFullPlayerExpanded.asStateFlow()
 
-    private val _toastMessage = MutableSharedFlow<String>()
-    val toastMessage: SharedFlow<String> = _toastMessage.asSharedFlow()
+    private val _toastMessage = MutableSharedFlow<UiText>()
+    val toastMessage: SharedFlow<UiText> = _toastMessage.asSharedFlow()
 
     val subscriptions: StateFlow<List<SubscriptionEntity>> = repository.subscriptions
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -118,7 +119,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setClientSpoof(client: ClientType) {
         playerManager.switchClientSpoof(client)
         viewModelScope.launch {
-            _toastMessage.emit("Đã đổi client giả lập: ${client.label}")
+            _toastMessage.emit(UiText.ResourceString(R.string.toast_client_changed, client.label))
         }
     }
 
@@ -129,10 +130,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 id = media.channelId,
                 title = media.channelTitle,
                 thumbnailUrl = media.thumbnailUrl,
-                subscriberCountText = "Kênh"
+                subscriberCountText = "Channel"
             )
             val subbed = repository.toggleSubscription(channel)
-            _toastMessage.emit(if (subbed) "Đã đăng ký kênh ${channel.title}" else "Đã hủy đăng ký ${channel.title}")
+            _toastMessage.emit(
+                if (subbed) UiText.ResourceString(R.string.toast_subscribed, channel.title)
+                else UiText.ResourceString(R.string.toast_unsubscribed, channel.title)
+            )
             refreshFeed()
         }
     }
@@ -140,7 +144,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun toggleSubscribeChannel(channel: StreamChannel) {
         viewModelScope.launch {
             val subbed = repository.toggleSubscription(channel)
-            _toastMessage.emit(if (subbed) "Đã đăng ký kênh ${channel.title}" else "Đã hủy đăng ký ${channel.title}")
+            _toastMessage.emit(
+                if (subbed) UiText.ResourceString(R.string.toast_subscribed, channel.title)
+                else UiText.ResourceString(R.string.toast_unsubscribed, channel.title)
+            )
             refreshFeed()
         }
     }
@@ -148,14 +155,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun clearHistory() {
         viewModelScope.launch {
             repository.clearHistory()
-            _toastMessage.emit("Đã xóa toàn bộ lịch sử xem")
+            _toastMessage.emit(UiText.ResourceString(R.string.toast_history_cleared))
         }
     }
 
     fun clearPreferences() {
         viewModelScope.launch {
             repository.clearPreferences()
-            _toastMessage.emit("Đã đặt lại điểm thuật toán gợi ý")
+            _toastMessage.emit(UiText.ResourceString(R.string.toast_recsys_reset))
             refreshFeed()
         }
     }
@@ -163,14 +170,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun exportBackup() {
         viewModelScope.launch {
             val json = repository.exportNewPipeJson()
-            _toastMessage.emit("Đã sao lưu ${subscriptions.value.size} kênh (định dạng NewPipe)")
+            _toastMessage.emit(UiText.ResourceString(R.string.toast_backup_exported, subscriptions.value.size))
         }
     }
 
     fun importBackup(jsonString: String) {
         viewModelScope.launch {
             val count = repository.importSubscriptionsJson(jsonString)
-            _toastMessage.emit("Đã nhập thành công $count kênh từ dữ liệu NewPipe")
+            _toastMessage.emit(UiText.ResourceString(R.string.toast_backup_imported, count))
             refreshFeed()
         }
     }

@@ -1,0 +1,11 @@
+# Ignored files and folders for Crowdin
+.git/
+.gradle/
+.idea/
+build/
+app/build/
+gradle/
+*.apk
+*.aab
+*.jks
+*.keystore

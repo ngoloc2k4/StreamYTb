@@ -39,10 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.data.local.WatchHistoryEntity
 import com.example.data.model.StreamVideo
 import java.text.SimpleDateFormat
@@ -76,7 +78,7 @@ fun LibraryScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Thư Viện Cục Bộ",
+                    text = stringResource(R.string.library_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -88,7 +90,7 @@ fun LibraryScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteSweep,
-                            contentDescription = "Xóa lịch sử",
+                            contentDescription = stringResource(R.string.library_clear_history_desc),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -118,12 +120,12 @@ fun LibraryScreen(
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "$subscriptionsCount kênh",
+                            text = stringResource(R.string.library_channels_count, subscriptionsCount),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Đang theo dõi",
+                            text = stringResource(R.string.library_subscriptions_label),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -144,12 +146,12 @@ fun LibraryScreen(
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "< 15 MB",
+                            text = stringResource(R.string.library_storage_value),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "APK & DB Nhẹ",
+                            text = stringResource(R.string.library_storage_label),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -174,7 +176,7 @@ fun LibraryScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Lịch Sử Xem / Nghe (${history.size})",
+                    text = stringResource(R.string.library_history_title, history.size),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -190,7 +192,7 @@ fun LibraryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Chưa có lịch sử phát phương tiện.",
+                        text = stringResource(R.string.library_history_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -246,7 +248,12 @@ fun LibraryScreen(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = "Đã xem ${item.watchedSec}s / ${item.durationSec}s • ${dateFormat.format(Date(item.timestamp))}",
+                                text = stringResource(
+                                    R.string.library_watched_progress,
+                                    item.watchedSec,
+                                    item.durationSec,
+                                    dateFormat.format(Date(item.timestamp))
+                                ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

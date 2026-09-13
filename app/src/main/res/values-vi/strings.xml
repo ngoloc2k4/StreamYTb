@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & General -->
+    <string name="action_back">Quay lại</string>
+    <string name="action_close">Đóng</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_clear">Xóa</string>
+    <string name="action_done">Xong</string>
+    <string name="action_retry">Thử lại</string>
+    <string name="action_search">Tìm kiếm</string>
+    <string name="notification_channel_name">Trình phát Media StreamYTb</string>
+    <string name="notification_channel_desc">Thông báo phát nền cho StreamYTb</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_music">Âm nhạc</string>
+    <string name="nav_subscriptions">Đăng ký</string>
+    <string name="nav_library">Thư viện</string>
+
+    <!-- Home Screen -->
+    <string name="home_no_ads">Không Quảng Cáo</string>
+    <string name="home_recsys_button_desc">Thuật toán gợi ý</string>
+    <string name="home_search_button_desc">Tìm kiếm</string>
+    <string name="home_recsys_banner_title">Local RecSys: Tự tính điểm không cần tài khoản</string>
+    <string name="home_recsys_banner_subtitle">50% Đăng ký • 30% Sở thích • 20% Thịnh hành VN</string>
+    <string name="home_recsys_banner_details">Chi tiết</string>
+    <string name="category_all">Tất cả</string>
+    <string name="category_music">Âm nhạc</string>
+    <string name="category_vpop">V-Pop</string>
+    <string name="category_lofi">Lofi</string>
+    <string name="category_coding">Lập trình</string>
+    <string name="category_podcast">Podcast</string>
+
+    <!-- Music Screen -->
+    <string name="music_hero_badge">STREAM MUSIC CORE</string>
+    <string name="music_hero_title">Trình phát Nhạc Nền Tối Ưu</string>
+    <string name="music_hero_desc">Giải mã Opus / M4A thuần túy, tiết kiệm 50% pin và RAM &lt; 90MB khi khóa màn hình.</string>
+    <string name="music_quick_picks_title">Bản Phối Gợi Ý Cho Bạn</string>
+    <string name="music_trending_title">Danh Sách Bài Hát Thịnh Hành</string>
+
+    <!-- Subscriptions Screen -->
+    <string name="subscriptions_title">Kênh Đăng Ký (%1$d)</string>
+    <string name="subscriptions_export_desc">Xuất dữ liệu NewPipe</string>
+    <string name="subscriptions_import_desc">Nhập dữ liệu NewPipe</string>
+    <string name="subscriptions_discover">Khám phá</string>
+    <string name="subscriptions_discover_channels">Khám phá kênh</string>
+    <string name="subscriptions_empty_hint">Chưa có video mới từ các kênh theo dõi</string>
+    <string name="subscriptions_import_dialog_title">Nhập Kênh NewPipe (JSON)</string>
+    <string name="subscriptions_import_dialog_desc">Dán tệp JSON sao lưu danh sách đăng ký từ NewPipe hoặc FlowMusic:</string>
+    <string name="subscriptions_import_dialog_placeholder">{\"subscriptions\": [...]}</string>
+    <string name="subscriptions_import_dialog_confirm">Nhập ngay</string>
+    <string name="subscriptions_discover_dialog_title">Khám phá Kênh Đề xuất</string>
+    <string name="group_all">Tất cả</string>
+    <string name="group_music">Âm nhạc</string>
+    <string name="group_coding">Lập trình</string>
+    <string name="group_relax">Thư giãn</string>
+    <string name="group_news">Tin tức</string>
+
+    <!-- Library Screen -->
+    <string name="library_title">Thư Viện Cục Bộ</string>
+    <string name="library_clear_history_desc">Xóa lịch sử</string>
+    <string name="library_channels_count">%1$d kênh</string>
+    <string name="library_subscriptions_label">Đang theo dõi</string>
+    <string name="library_storage_value">&lt; 15 MB</string>
+    <string name="library_storage_label">APK &amp; DB Nhẹ</string>
+    <string name="library_history_title">Lịch Sử Xem / Nghe (%1$d)</string>
+    <string name="library_history_empty">Chưa có lịch sử phát phương tiện.</string>
+    <string name="library_watched_progress">Đã xem %1$ds / %2$ds • %3$s</string>
+
+    <!-- Search Screen -->
+    <string name="search_input_placeholder">Tìm bài hát, video, nghệ sĩ…</string>
+    <string name="search_clear_desc">Xóa nội dung tìm</string>
+    <string name="search_no_results">Không tìm thấy kết quả phù hợp cho \"%1$s\"</string>
+
+    <!-- Player (FullPlayer & MiniPlayer) -->
+    <string name="player_select_media_hint">Chọn video hoặc bài hát để bắt đầu phát</string>
+    <string name="player_playing_audio_mode">ĐANG PHÁT NHẠC (TIẾT KIỆM RAM)</string>
+    <string name="player_playing_video_mode">ĐANG PHÁT VIDEO</string>
+    <string name="player_client_spoof_desc">Chọn Client giả lập</string>
+    <string name="player_tab_player">Trình phát</string>
+    <string name="player_tab_queue">Danh sách phát (%1$d)</string>
+    <string name="player_tab_details">Chi tiết &amp; Lời bài hát</string>
+    <string name="player_audio_stream_title">Pure Audio Stream (M4A/Opus)</string>
+    <string name="player_audio_stream_desc">RAM Usage &lt; 90MB • Video Decoder Tắt</string>
+    <string name="player_btn_prev">Bài trước</string>
+    <string name="player_btn_rewind_10s">Tua lại 10s</string>
+    <string name="player_btn_play">Phát</string>
+    <string name="player_btn_pause">Tạm dừng</string>
+    <string name="player_btn_forward_10s">Tua tới 10s</string>
+    <string name="player_btn_next">Bài tiếp theo</string>
+    <string name="player_audio_chip_on">Chỉ nghe Audio (90MB RAM)</string>
+    <string name="player_audio_chip_off">Video bật</string>
+    <string name="player_audio_toggle_desc_audio">Chế độ âm thanh</string>
+    <string name="player_audio_toggle_desc_video">Chế độ video</string>
+    <string name="player_close_desc">Đóng trình phát</string>
+    <string name="player_queue_empty">Danh sách phát trống</string>
+    <string name="player_description_title">Mô tả nội dung</string>
+    <string name="player_no_description">Không có mô tả chi tiết.</string>
+    <string name="player_tags_title">Thẻ nội dung (Tags &amp; RecSys Triggers)</string>
+    <string name="player_channel_info">Kênh: %1$s | %2$s | %3$s</string>
+
+    <!-- Channel & Subscription Actions -->
+    <string name="channel_subscribed">Đã đăng ký</string>
+    <string name="channel_subscribe">Đăng ký</string>
+    <string name="video_audio_only">Chỉ âm thanh</string>
+
+    <!-- Feed Sources (RecSys badges) -->
+    <string name="feed_source_subscription">Kênh đăng ký (50%)</string>
+    <string name="feed_source_interaction">Gợi ý từ sở thích (30%)</string>
+    <string name="feed_source_trending">Thịnh hành khu vực VN (20%)</string>
+    <string name="feed_source_music_charts">Bảng xếp hạng Âm nhạc</string>
+
+    <!-- RecSys Dialog -->
+    <string name="recsys_dialog_title">Thuật toán Gợi ý Cục bộ (RecSys)</string>
+    <string name="recsys_formula_title">Công thức tính điểm (Section IV):</string>
+    <string name="recsys_formula_rule_1">• Xem ≥ 70% hoặc hết bài: +5 điểm</string>
+    <string name="recsys_formula_rule_2">• Chuyển bài &lt; 30 giây: -3 điểm</string>
+    <string name="recsys_formula_rule_3">• Đăng ký kênh (Subscribe): +10 điểm</string>
+    <string name="recsys_formula_rule_4">• Nghe lại trong 24 giờ: +4 điểm</string>
+    <string name="recsys_feed_breakdown_title">Cơ cấu Nguồn Cấp Home Feed:</string>
+    <string name="recsys_breakdown_sub">Đăng ký (50%)</string>
+    <string name="recsys_breakdown_pref">Sở thích (30%)</string>
+    <string name="recsys_breakdown_trend">Trending (20%)</string>
+    <string name="recsys_preferences_table_title">Bảng Trọng số Sở thích Trong Room (user_preferences):</string>
+    <string name="recsys_preferences_empty">Chưa có tương tác. Hãy nghe nhạc hoặc xem video để thuật toán tự động tính điểm sở thích.</string>
+    <string name="recsys_score_format">%1$.1f điểm</string>
+    <string name="recsys_reset_button">Đặt lại điểm</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_client_changed">Đã đổi client giả lập: %1$s</string>
+    <string name="toast_subscribed">Đã đăng ký kênh %1$s</string>
+    <string name="toast_unsubscribed">Đã hủy đăng ký %1$s</string>
+    <string name="toast_history_cleared">Đã xóa toàn bộ lịch sử xem</string>
+    <string name="toast_recsys_reset">Đã đặt lại điểm thuật toán gợi ý</string>
+    <string name="toast_backup_exported">Đã sao lưu %1$d kênh (định dạng NewPipe)</string>
+    <string name="toast_backup_imported">Đã nhập thành công %1$d kênh từ dữ liệu NewPipe</string>
+</resources>

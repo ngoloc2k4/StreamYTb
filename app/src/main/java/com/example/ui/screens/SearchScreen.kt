@@ -35,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import com.example.data.model.StreamVideo
 import com.example.ui.components.VideoCard
 
@@ -88,7 +90,7 @@ fun SearchScreen(
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Quay lại"
+                    contentDescription = stringResource(R.string.action_back)
                 )
             }
 
@@ -98,7 +100,7 @@ fun SearchScreen(
                 modifier = Modifier
                     .weight(1f)
                     .testTag("search_input_field"),
-                placeholder = { Text("Tìm bài hát, video, nghệ sĩ...") },
+                placeholder = { Text(stringResource(R.string.search_input_placeholder)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -110,7 +112,7 @@ fun SearchScreen(
                         IconButton(onClick = { query = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Xóa nội dung tìm"
+                                contentDescription = stringResource(R.string.search_clear_desc)
                             )
                         }
                     }
@@ -149,7 +151,7 @@ fun SearchScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Không tìm thấy kết quả phù hợp cho \"$query\"",
+                    text = stringResource(R.string.search_no_results, query),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

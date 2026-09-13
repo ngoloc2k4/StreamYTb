@@ -47,9 +47,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import com.example.data.model.FeedItem
 import com.example.data.model.StreamVideo
 import com.example.ui.components.VideoCard
+
+data class CategoryFilterItem(@StringRes val titleRes: Int, val id: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,13 +67,20 @@ fun HomeScreen(
     isRefreshing: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val categories = listOf("Tất cả", "Âm nhạc", "V-Pop", "Lofi", "Lập trình", "Podcast")
-    var selectedCategory by remember { mutableStateOf("Tất cả") }
+    val categories = listOf(
+        CategoryFilterItem(R.string.category_all, "All"),
+        CategoryFilterItem(R.string.category_music, "Âm nhạc"),
+        CategoryFilterItem(R.string.category_vpop, "V-Pop"),
+        CategoryFilterItem(R.string.category_lofi, "Lofi"),
+        CategoryFilterItem(R.string.category_coding, "Lập trình"),
+        CategoryFilterItem(R.string.category_podcast, "Podcast")
+    )
+    var selectedCategoryId by remember { mutableStateOf("All") }
 
-    val filteredItems = remember(feedItems, selectedCategory) {
-        if (selectedCategory == "Tất cả") feedItems
+    val filteredItems = remember(feedItems, selectedCategoryId) {
+        if (selectedCategoryId == "All") feedItems
         else feedItems.filter { item ->
-            item.video.category == selectedCategory || item.video.tags.contains(selectedCategory)
+            item.video.category == selectedCategoryId || item.video.tags.contains(selectedCategoryId)
         }
     }
 
@@ -124,7 +136,7 @@ fun HomeScreen(
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
-                                text = "Không Quảng Cáo",
+                                text = stringResource(R.string.home_no_ads),
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
@@ -141,7 +153,7 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = "Thuật toán gợi ý",
+                                contentDescription = stringResource(R.string.home_recsys_button_desc),
                                 tint = MaterialTheme.colorScheme.secondary
                             )
                         }
@@ -151,7 +163,7 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = "Tìm kiếm",
+                                contentDescription = stringResource(R.string.home_search_button_desc),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -182,19 +194,19 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Local RecSys: Tự tính điểm không cần tài khoản",
+                                text = stringResource(R.string.home_recsys_banner_title),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "50% Đăng ký • 30% Sở thích • 20% Thịnh hành VN",
+                                text = stringResource(R.string.home_recsys_banner_subtitle),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Text(
-                            text = "Chi tiết",
+                            text = stringResource(R.string.home_recsys_banner_details),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -211,9 +223,9 @@ fun HomeScreen(
                 ) {
                     items(categories) { cat ->
                         FilterChip(
-                            selected = selectedCategory == cat,
-                            onClick = { selectedCategory = cat },
-                            label = { Text(cat) },
+                            selected = selectedCategoryId == cat.id,
+                            onClick = { selectedCategoryId = cat.id },
+                            label = { Text(stringResource(cat.titleRes)) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                                 selectedLabelColor = Color.White

@@ -34,10 +34,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import coil.compose.AsyncImage
 import com.example.data.model.PlayerState
 
@@ -147,7 +149,7 @@ fun MiniPlayer(
                 ) {
                     Icon(
                         imageVector = if (playerState.isAudioOnlyMode) Icons.Default.Headphones else Icons.Default.Videocam,
-                        contentDescription = if (playerState.isAudioOnlyMode) "Chế độ âm thanh" else "Chế độ video",
+                        contentDescription = if (playerState.isAudioOnlyMode) stringResource(R.string.player_audio_toggle_desc_audio) else stringResource(R.string.player_audio_toggle_desc_video),
                         tint = if (playerState.isAudioOnlyMode) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -168,7 +170,7 @@ fun MiniPlayer(
                     } else {
                         Icon(
                             imageVector = if (playerState.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = if (playerState.isPlaying) "Tạm dừng" else "Phát",
+                            contentDescription = if (playerState.isPlaying) stringResource(R.string.player_btn_pause) else stringResource(R.string.player_btn_play),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -183,7 +185,7 @@ fun MiniPlayer(
                 ) {
                     Icon(
                         imageVector = Icons.Default.SkipNext,
-                        contentDescription = "Bài tiếp theo",
+                        contentDescription = stringResource(R.string.player_btn_next),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -197,7 +199,7 @@ fun MiniPlayer(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Đóng trình phát",
+                        contentDescription = stringResource(R.string.player_close_desc),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }

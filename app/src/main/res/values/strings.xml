@@ -1,3 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">StreamYTb</string>
+    <!-- App & General -->
+    <string name="app_name" translatable="false">StreamYTb</string>
+    <string name="action_back">Back</string>
+    <string name="action_close">Close</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_done">Done</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_search">Search</string>
+    <string name="notification_channel_name">StreamYTb Media Playback</string>
+    <string name="notification_channel_desc">Background playback notification for StreamYTb</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_home">Home</string>
+    <string name="nav_music">Music</string>
+    <string name="nav_subscriptions">Subscriptions</string>
+    <string name="nav_library">Library</string>
+
+    <!-- Home Screen -->
+    <string name="home_no_ads">No Ads</string>
+    <string name="home_recsys_button_desc">Recommendation algorithm</string>
+    <string name="home_search_button_desc">Search</string>
+    <string name="home_recsys_banner_title">Local RecSys: Offline scoring without account</string>
+    <string name="home_recsys_banner_subtitle">50% Subscriptions • 30% Preferences • 20% VN Trending</string>
+    <string name="home_recsys_banner_details">Details</string>
+    <string name="category_all">All</string>
+    <string name="category_music">Music</string>
+    <string name="category_vpop">V-Pop</string>
+    <string name="category_lofi">Lofi</string>
+    <string name="category_coding">Coding</string>
+    <string name="category_podcast">Podcast</string>
+
+    <!-- Music Screen -->
+    <string name="music_hero_badge">STREAM MUSIC CORE</string>
+    <string name="music_hero_title">Optimized Background Music Player</string>
+    <string name="music_hero_desc">Pure Opus / M4A decoding, saves 50% battery and keeps RAM &lt; 90MB on lockscreen.</string>
+    <string name="music_quick_picks_title">Quick Picks for You</string>
+    <string name="music_trending_title">Trending Music Tracks</string>
+
+    <!-- Subscriptions Screen -->
+    <string name="subscriptions_title">Subscribed Channels (%1$d)</string>
+    <string name="subscriptions_export_desc">Export NewPipe JSON</string>
+    <string name="subscriptions_import_desc">Import NewPipe JSON</string>
+    <string name="subscriptions_discover">Discover</string>
+    <string name="subscriptions_discover_channels">Discover Channels</string>
+    <string name="subscriptions_empty_hint">No new videos from subscribed channels</string>
+    <string name="subscriptions_import_dialog_title">Import NewPipe Channels (JSON)</string>
+    <string name="subscriptions_import_dialog_desc">Paste subscription backup JSON from NewPipe or FlowMusic:</string>
+    <string name="subscriptions_import_dialog_placeholder">{\"subscriptions\": [...]}</string>
+    <string name="subscriptions_import_dialog_confirm">Import Now</string>
+    <string name="subscriptions_discover_dialog_title">Discover Recommended Channels</string>
+    <string name="group_all">All</string>
+    <string name="group_music">Music</string>
+    <string name="group_coding">Coding</string>
+    <string name="group_relax">Relax</string>
+    <string name="group_news">News</string>
+
+    <!-- Library Screen -->
+    <string name="library_title">Local Library</string>
+    <string name="library_clear_history_desc">Clear history</string>
+    <string name="library_channels_count">%1$d channels</string>
+    <string name="library_subscriptions_label">Following</string>
+    <string name="library_storage_value">&lt; 15 MB</string>
+    <string name="library_storage_label">Light APK &amp; DB</string>
+    <string name="library_history_title">Watch / Listen History (%1$d)</string>
+    <string name="library_history_empty">No playback history yet.</string>
+    <string name="library_watched_progress">Watched %1$ds / %2$ds • %3$s</string>
+
+    <!-- Search Screen -->
+    <string name="search_input_placeholder">Search songs, videos, artists…</string>
+    <string name="search_clear_desc">Clear search query</string>
+    <string name="search_no_results">No matching results found for \"%1$s\"</string>
+
+    <!-- Player (FullPlayer & MiniPlayer) -->
+    <string name="player_select_media_hint">Select a video or song to start playing</string>
+    <string name="player_playing_audio_mode">PLAYING AUDIO (SAVING RAM)</string>
+    <string name="player_playing_video_mode">PLAYING VIDEO</string>
+    <string name="player_client_spoof_desc">Select spoofed client</string>
+    <string name="player_tab_player">Player</string>
+    <string name="player_tab_queue">Queue (%1$d)</string>
+    <string name="player_tab_details">Details &amp; Lyrics</string>
+    <string name="player_audio_stream_title">Pure Audio Stream (M4A/Opus)</string>
+    <string name="player_audio_stream_desc">RAM Usage &lt; 90MB • Video Decoder Off</string>
+    <string name="player_btn_prev">Previous</string>
+    <string name="player_btn_rewind_10s">Rewind 10s</string>
+    <string name="player_btn_play">Play</string>
+    <string name="player_btn_pause">Pause</string>
+    <string name="player_btn_forward_10s">Forward 10s</string>
+    <string name="player_btn_next">Next</string>
+    <string name="player_audio_chip_on">Audio Only (90MB RAM)</string>
+    <string name="player_audio_chip_off">Video On</string>
+    <string name="player_audio_toggle_desc_audio">Audio mode</string>
+    <string name="player_audio_toggle_desc_video">Video mode</string>
+    <string name="player_close_desc">Close player</string>
+    <string name="player_queue_empty">Playback queue is empty</string>
+    <string name="player_description_title">Content Description</string>
+    <string name="player_no_description">No detailed description available.</string>
+    <string name="player_tags_title">Content Tags &amp; RecSys Triggers</string>
+    <string name="player_channel_info">Channel: %1$s | %2$s | %3$s</string>
+
+    <!-- Channel & Subscription Actions -->
+    <string name="channel_subscribed">Subscribed</string>
+    <string name="channel_subscribe">Subscribe</string>
+    <string name="video_audio_only">Audio only</string>
+
+    <!-- Feed Sources (RecSys badges) -->
+    <string name="feed_source_subscription">Subscription (50%)</string>
+    <string name="feed_source_interaction">Preferences (30%)</string>
+    <string name="feed_source_trending">VN Trending (20%)</string>
+    <string name="feed_source_music_charts">Music Charts</string>
+
+    <!-- RecSys Dialog -->
+    <string name="recsys_dialog_title">Local Recommendation Algorithm (RecSys)</string>
+    <string name="recsys_formula_title">Scoring Formula (Section IV):</string>
+    <string name="recsys_formula_code" translatable="false">Score(Tag) = Σ(WatchTimeBonus + InteractionWeight) - DecayFactor</string>
+    <string name="recsys_formula_rule_1">• Watch ≥ 70% or full: +5 pts</string>
+    <string name="recsys_formula_rule_2">• Skip &lt; 30 seconds: -3 pts</string>
+    <string name="recsys_formula_rule_3">• Subscribe to channel: +10 pts</string>
+    <string name="recsys_formula_rule_4">• Replay within 24 hours: +4 pts</string>
+    <string name="recsys_feed_breakdown_title">Home Feed Source Breakdown:</string>
+    <string name="recsys_breakdown_sub">Subscribed (50%)</string>
+    <string name="recsys_breakdown_pref">Interests (30%)</string>
+    <string name="recsys_breakdown_trend">Trending (20%)</string>
+    <string name="recsys_preferences_table_title">Room Preference Weights (user_preferences):</string>
+    <string name="recsys_preferences_empty">No interactions yet. Listen to music or watch videos to let the algorithm compute affinity scores.</string>
+    <string name="recsys_score_format">%1$.1f pts</string>
+    <string name="recsys_reset_button">Reset Scores</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_client_changed">Switched client spoof: %1$s</string>
+    <string name="toast_subscribed">Subscribed to channel %1$s</string>
+    <string name="toast_unsubscribed">Unsubscribed from channel %1$s</string>
+    <string name="toast_history_cleared">Cleared all playback history</string>
+    <string name="toast_recsys_reset">Reset recommendation algorithm scores</string>
+    <string name="toast_backup_exported">Exported %1$d channels (NewPipe format)</string>
+    <string name="toast_backup_imported">Successfully imported %1$d channels from NewPipe data</string>
 </resources>

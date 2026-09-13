@@ -32,9 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.data.local.UserPreferenceEntity
 
 @Composable
@@ -55,7 +57,7 @@ fun RecSysDialog(
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Thuật toán Gợi ý Cục bộ (RecSys)")
+                Text(stringResource(R.string.recsys_dialog_title))
             }
         },
         text = {
@@ -70,29 +72,29 @@ fun RecSysDialog(
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(
-                                text = "Công thức tính điểm (Section IV):",
+                                text = stringResource(R.string.recsys_formula_title),
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Score(Tag) = Σ(WatchTimeBonus + InteractionWeight) - DecayFactor",
+                                text = stringResource(R.string.recsys_formula_code),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("• Xem ≥ 70% hoặc hết bài: +5 điểm", fontSize = 12.sp)
-                            Text("• Chuyển bài < 30 giây: -3 điểm", fontSize = 12.sp)
-                            Text("• Đăng ký kênh (Subscribe): +10 điểm", fontSize = 12.sp)
-                            Text("• Nghe lại trong 24 giờ: +4 điểm", fontSize = 12.sp)
+                            Text(stringResource(R.string.recsys_formula_rule_1), fontSize = 12.sp)
+                            Text(stringResource(R.string.recsys_formula_rule_2), fontSize = 12.sp)
+                            Text(stringResource(R.string.recsys_formula_rule_3), fontSize = 12.sp)
+                            Text(stringResource(R.string.recsys_formula_rule_4), fontSize = 12.sp)
                         }
                     }
                 }
 
                 item {
                     Text(
-                        text = "Cơ cấu Nguồn Cấp Home Feed:",
+                        text = stringResource(R.string.recsys_feed_breakdown_title),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelLarge
                     )
@@ -109,7 +111,7 @@ fun RecSysDialog(
                                 .padding(vertical = 4.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Đăng ký (50%)", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.recsys_breakdown_sub), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                         }
                         Box(
                             modifier = Modifier
@@ -118,7 +120,7 @@ fun RecSysDialog(
                                 .padding(vertical = 4.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Sở thích (30%)", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.recsys_breakdown_pref), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                         }
                         Box(
                             modifier = Modifier
@@ -127,7 +129,7 @@ fun RecSysDialog(
                                 .padding(vertical = 4.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Trending (20%)", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.recsys_breakdown_trend), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -135,7 +137,7 @@ fun RecSysDialog(
                 item {
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Bảng Trọng số Sở thích Trong Room (user_preferences):",
+                        text = stringResource(R.string.recsys_preferences_table_title),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelLarge
                     )
@@ -144,7 +146,7 @@ fun RecSysDialog(
                 if (preferences.isEmpty()) {
                     item {
                         Text(
-                            text = "Chưa có tương tác. Hãy nghe nhạc hoặc xem video để thuật toán tự động tính điểm sở thích.",
+                            text = stringResource(R.string.recsys_preferences_empty),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -168,7 +170,7 @@ fun RecSysDialog(
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                text = String.format("%.1f điểm", pref.affinityScore),
+                                text = stringResource(R.string.recsys_score_format, pref.affinityScore),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.secondary,
                                 fontWeight = FontWeight.Bold
@@ -183,7 +185,7 @@ fun RecSysDialog(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text("Đóng")
+                Text(stringResource(R.string.action_close))
             }
         },
         dismissButton = {
@@ -200,7 +202,7 @@ fun RecSysDialog(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Đặt lại điểm")
+                    Text(stringResource(R.string.recsys_reset_button))
                 }
             }
         }
