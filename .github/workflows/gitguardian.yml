@@ -17,7 +17,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check API Key
+        id: check_key
+        run: |
+          if [ -z "${{ secrets.GITGUARDIAN_API_KEY }}" ]; then
+            echo "has_key=false" >> $GITHUB_OUTPUT
+            echo "::warning title=GitGuardian::GITGUARDIAN_API_KEY secret is not configured in GitHub repository secrets. Add GITGUARDIAN_API_KEY in Settings > Secrets and variables > Actions to enable full secret detection."
+          else
+            echo "has_key=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: GitGuardian Scan
+        if: steps.check_key.outputs.has_key == 'true'
         uses: GitGuardian/ggshield-action@v1
         env:
           GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
