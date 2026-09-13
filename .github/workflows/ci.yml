@@ -65,10 +65,14 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "=== Uploading APKs to Official Beta Release ==="
-        gh release upload v1.0.0-beta.1 \
-          app/build/outputs/apk/release/app-release.apk \
-          app/build/outputs/apk/debug/app-debug.apk \
-          --clobber
-        echo "=== Release assets uploaded successfully! ==="
-        gh release view v1.0.0-beta.1
+        echo "=== Uploading APK Assets to Official Beta Release ==="
+        for TAG in "v1.0.0-beta.1" "v1.0.0-beta"; do
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Uploading APKs to $TAG..."
+            gh release upload "$TAG" \
+              app/build/outputs/apk/release/app-release.apk \
+              app/build/outputs/apk/debug/app-debug.apk \
+              --clobber || true
+            gh release view "$TAG"
+          fi
+        done
