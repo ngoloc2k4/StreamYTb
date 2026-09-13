@@ -25,5 +25,10 @@ jobs:
       with:
         gradle-version: '9.3.1'
 
-    - name: Build with Gradle
-      run: gradle assembleDebug --stacktrace
+    - name: Build Debug and Release APKs with R8
+      run: gradle assembleDebug assembleRelease --stacktrace
+
+    - name: Verify APK Size
+      run: |
+        echo "=== Generated APKs ==="
+        find app/build/outputs/apk -name "*.apk" -exec ls -lh {} +

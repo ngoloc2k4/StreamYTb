@@ -327,6 +327,12 @@ private fun PlayerMainContent(
                     update = { view ->
                         view.player = exoPlayer
                     },
+                    onReset = { view ->
+                        view.player = null
+                    },
+                    onRelease = { view ->
+                        view.player = null
+                    },
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
