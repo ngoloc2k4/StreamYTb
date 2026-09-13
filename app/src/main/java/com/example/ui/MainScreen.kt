@@ -304,6 +304,7 @@ private fun ScreenContent(
         SearchScreen(
             onBack = { viewModel.setSearchOpen(false) },
             onSearch = { q -> viewModel.repository.search(q) },
+            onOnlineSearch = { q -> viewModel.repository.searchOnline(q) },
             onVideoClick = { video ->
                 viewModel.playVideo(video)
                 viewModel.setSearchOpen(false)

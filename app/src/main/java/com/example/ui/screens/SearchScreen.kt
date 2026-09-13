@@ -38,15 +38,39 @@ import androidx.compose.ui.unit.dp
 import com.example.data.model.StreamVideo
 import com.example.ui.components.VideoCard
 
+import kotlinx.coroutines.delay
+
 @Composable
 fun SearchScreen(
     onBack: () -> Unit,
     onSearch: (String) -> List<StreamVideo>,
+    onOnlineSearch: (suspend (String) -> List<StreamVideo>)? = null,
     onVideoClick: (StreamVideo) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var query by remember { mutableStateOf("") }
-    val searchResults = remember(query) { onSearch(query) }
+    var searchResults by remember { mutableStateOf(onSearch("")) }
+    var isSearching by remember { mutableStateOf(false) }
+
+    androidx.compose.runtime.LaunchedEffect(query) {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) {
+            searchResults = onSearch("")
+            isSearching = false
+        } else {
+            searchResults = onSearch(trimmed)
+            if (onOnlineSearch != null) {
+                isSearching = true
+                delay(400)
+                val online = onOnlineSearch(trimmed)
+                if (online.isNotEmpty()) {
+                    searchResults = online
+                }
+                isSearching = false
+            }
+        }
+    }
+
     val quickKeywords = listOf("V-Pop", "Lofi", "Acoustic", "Android", "Podcast", "EDM")
 
     Column(

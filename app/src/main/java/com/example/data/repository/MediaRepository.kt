@@ -68,7 +68,9 @@ class MediaRepository(private val context: Context) {
 
     suspend fun getHomeFeed(): List<FeedItem> {
         return withContext(Dispatchers.IO) {
-            recSysEngine.generateHomeFeed(getAllVideos())
+            val trending = innerTubeEngine.fetchTrending()
+            val baseVideos = if (trending.isNotEmpty()) trending else getAllVideos()
+            recSysEngine.generateHomeFeed(baseVideos)
         }
     }
 
@@ -135,6 +137,25 @@ class MediaRepository(private val context: Context) {
             it.title.lowercase().contains(trimmed) ||
                     it.channelTitle.lowercase().contains(trimmed) ||
                     it.tags.any { tag -> tag.lowercase().contains(trimmed) }
+        }
+    }
+
+    suspend fun searchOnline(query: String): List<StreamVideo> {
+        return withContext(Dispatchers.IO) {
+            val trimmed = query.trim()
+            if (trimmed.isEmpty()) return@withContext getAllVideos()
+            innerTubeEngine.searchVideos(trimmed)
+        }
+    }
+
+    suspend fun resolveStream(video: StreamVideo): StreamVideo {
+        return withContext(Dispatchers.IO) {
+            if (video.streamUrl.isEmpty() || !video.streamUrl.startsWith("http")) {
+                val result = innerTubeEngine.fetchVideoStreams(video.id)
+                result.getOrNull() ?: video
+            } else {
+                video
+            }
         }
     }
 
