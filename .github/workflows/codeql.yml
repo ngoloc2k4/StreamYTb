@@ -40,7 +40,7 @@ jobs:
         queries: +security-extended,security-and-quality
 
     - name: Build with Gradle
-      run: gradle assembleDebug --stacktrace
+      run: gradle clean assembleDebug --no-build-cache --rerun-tasks --stacktrace
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
