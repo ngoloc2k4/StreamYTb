@@ -74,27 +74,6 @@ fun VideoCard(
                     contentScale = ContentScale.Crop
                 )
 
-                // RecSys Source badge if available
-                if (feedItem != null) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(8.dp)
-                            .background(
-                                color = Color(feedItem.sourceReason.badgeColorHex).copy(alpha = 0.9f),
-                                shape = RoundedCornerShape(6.dp)
-                            )
-                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                    ) {
-                        Text(
-                            text = stringResource(feedItem.sourceReason.stringRes),
-                            color = Color.White,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-
                 // Audio-only badge or Video duration
                 Row(
                     modifier = Modifier

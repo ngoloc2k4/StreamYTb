@@ -47,7 +47,7 @@ fun SearchScreen(
     onBack: () -> Unit,
     onSearch: (String) -> List<StreamVideo>,
     onOnlineSearch: (suspend (String) -> List<StreamVideo>)? = null,
-    onVideoClick: (StreamVideo) -> Unit,
+    onVideoClick: (StreamVideo, List<StreamVideo>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var query by remember { mutableStateOf("") }
@@ -165,7 +165,7 @@ fun SearchScreen(
                 items(searchResults) { video ->
                     VideoCard(
                         video = video,
-                        onClick = { onVideoClick(video) }
+                        onClick = { onVideoClick(video, searchResults) }
                     )
                 }
             }

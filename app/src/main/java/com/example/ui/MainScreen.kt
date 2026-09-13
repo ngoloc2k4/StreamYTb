@@ -83,6 +83,7 @@ fun MainScreen(viewModel: MainViewModel) {
     val isSearchOpen by viewModel.isSearchOpen.collectAsState()
     val isRecSysDialogOpen by viewModel.isRecSysDialogOpen.collectAsState()
     val isFullPlayerExpanded by viewModel.isFullPlayerExpanded.collectAsState()
+    val musicTracks by viewModel.musicTracks.collectAsState()
 
     var currentTabIndex by remember { mutableIntStateOf(0) }
 
@@ -190,7 +191,8 @@ fun MainScreen(viewModel: MainViewModel) {
                             feedItems = feedItems,
                             isRefreshing = isRefreshing,
                             subscriptions = subscriptions,
-                            watchHistory = watchHistory
+                            watchHistory = watchHistory,
+                            musicTracks = musicTracks
                         )
                     }
                 }
@@ -255,7 +257,8 @@ fun MainScreen(viewModel: MainViewModel) {
                         feedItems = feedItems,
                         isRefreshing = isRefreshing,
                         subscriptions = subscriptions,
-                        watchHistory = watchHistory
+                        watchHistory = watchHistory,
+                        musicTracks = musicTracks
                     )
 
                     // Expandable FullPlayer overlay
@@ -303,15 +306,16 @@ private fun ScreenContent(
     feedItems: List<com.example.data.model.FeedItem>,
     isRefreshing: Boolean,
     subscriptions: List<com.example.data.local.SubscriptionEntity>,
-    watchHistory: List<com.example.data.local.WatchHistoryEntity>
+    watchHistory: List<com.example.data.local.WatchHistoryEntity>,
+    musicTracks: List<com.example.data.model.StreamVideo>
 ) {
     if (isSearchOpen) {
         SearchScreen(
             onBack = { viewModel.setSearchOpen(false) },
             onSearch = { q -> viewModel.repository.search(q) },
             onOnlineSearch = { q -> viewModel.repository.searchOnline(q) },
-            onVideoClick = { video ->
-                viewModel.playVideo(video)
+            onVideoClick = { video, queue ->
+                viewModel.playVideo(video, queue = queue)
                 viewModel.setSearchOpen(false)
             }
         )
@@ -319,15 +323,17 @@ private fun ScreenContent(
         when (currentTabIndex) {
             0 -> HomeScreen(
                 feedItems = feedItems,
-                onVideoClick = { viewModel.playVideo(it) },
+                onVideoClick = { viewModel.playVideo(it, queue = feedItems.map { item -> item.video }) },
                 onSearchClick = { viewModel.setSearchOpen(true) },
                 onOpenRecSysStats = { viewModel.setRecSysDialogOpen(true) },
                 onRefresh = { viewModel.refreshFeed() },
                 isRefreshing = isRefreshing
             )
             1 -> MusicScreen(
-                musicTracks = viewModel.repository.getMusicVideos(),
-                onPlayTrack = { viewModel.playMusicTrack(it) }
+                musicTracks = musicTracks,
+                onPlayTrack = { viewModel.playMusicTrack(it, queue = musicTracks) },
+                onSearchClick = { viewModel.setSearchOpen(true) },
+                onSelectGenre = { viewModel.refreshMusic(it) }
             )
             2 -> SubscriptionsScreen(
                 subscriptions = subscriptions,

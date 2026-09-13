@@ -29,6 +29,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.annotation.StringRes
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,17 +56,103 @@ import com.example.R
 import coil.compose.AsyncImage
 import com.example.data.model.StreamVideo
 
+data class MusicGenreItem(@StringRes val titleRes: Int, val query: String)
+
 @Composable
 fun MusicScreen(
     musicTracks: List<StreamVideo>,
     onPlayTrack: (StreamVideo) -> Unit,
+    onSearchClick: () -> Unit,
+    onSelectGenre: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val genres = listOf(
+        MusicGenreItem(R.string.music_category_all, ""),
+        MusicGenreItem(R.string.music_category_vpop, "V-Pop"),
+        MusicGenreItem(R.string.music_category_lofi, "Lofi"),
+        MusicGenreItem(R.string.music_category_acoustic, "Acoustic"),
+        MusicGenreItem(R.string.music_category_edm, "EDM"),
+        MusicGenreItem(R.string.music_category_ballad, "Ballad")
+    )
+    var selectedGenreQuery by remember { mutableStateOf("") }
+
     LazyColumn(
         modifier = modifier.fillMaxSize().testTag("music_screen"),
         contentPadding = PaddingValues(bottom = 90.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Music Top App Bar
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(Color(0xFFE50914), Color(0xFF8A2BE2))
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Headphones,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = stringResource(R.string.nav_music),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                IconButton(
+                    onClick = onSearchClick,
+                    modifier = Modifier.testTag("btn_music_search")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.home_search_button_desc),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
+        // Genre filter chips row
+        item {
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(genres) { genre ->
+                    FilterChip(
+                        selected = selectedGenreQuery == genre.query,
+                        onClick = {
+                            selectedGenreQuery = genre.query
+                            onSelectGenre?.invoke(genre.query)
+                        },
+                        label = { Text(stringResource(genre.titleRes)) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    )
+                }
+            }
+        }
         // Hero Banner
         item {
             Box(

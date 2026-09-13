@@ -37,6 +37,12 @@
     <string name="music_hero_desc">Giải mã Opus / M4A thuần túy, tiết kiệm 50% pin và RAM &lt; 90MB khi khóa màn hình.</string>
     <string name="music_quick_picks_title">Bản Phối Gợi Ý Cho Bạn</string>
     <string name="music_trending_title">Danh Sách Bài Hát Thịnh Hành</string>
+    <string name="music_category_all">Tất cả</string>
+    <string name="music_category_vpop">V-Pop</string>
+    <string name="music_category_lofi">Lofi &amp; Chill</string>
+    <string name="music_category_acoustic">Acoustic</string>
+    <string name="music_category_edm">EDM</string>
+    <string name="music_category_ballad">Ballad</string>
 
     <!-- Subscriptions Screen -->
     <string name="subscriptions_title">Kênh Đăng Ký (%1$d)</string>
@@ -73,6 +79,7 @@
     <string name="search_no_results">Không tìm thấy kết quả phù hợp cho \"%1$s\"</string>
 
     <!-- Player (FullPlayer & MiniPlayer) -->
+    <string name="player_collapse_desc">Thu nhỏ trình phát</string>
     <string name="player_select_media_hint">Chọn video hoặc bài hát để bắt đầu phát</string>
     <string name="player_playing_audio_mode">ĐANG PHÁT NHẠC (TIẾT KIỆM RAM)</string>
     <string name="player_playing_video_mode">ĐANG PHÁT VIDEO</string>

@@ -4,21 +4,25 @@ import androidx.annotation.StringRes
 import com.example.R
 
 enum class ClientType(val label: String, val userAgent: String) {
-    IOS(
-        label = "iOS Mock",
-        userAgent = "com.google.ios.youtube/19.20.1 (iPhone14,5; U; CPU iOS 17_5 like Mac OS X; vi_VN)"
+    ANDROID_VR(
+        label = "Android VR",
+        userAgent = "Mozilla/5.0 (Linux; Android 12; Quest 3) AppleWebKit/537.36"
+    ),
+    TVHTML5(
+        label = "TVHTML5",
+        userAgent = "Mozilla/5.0 (SMART-TV; Linux; Tizen 6.0) AppleWebKit/538.1 (KHTML, like Gecko)"
     ),
     WEB(
         label = "Web Client",
-        userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+        userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+    ),
+    IOS(
+        label = "iOS Client",
+        userAgent = "com.google.ios.youtube/19.20.1 (iPhone14,5; U; CPU iOS 17_5 like Mac OS X; vi_VN)"
     ),
     ANDROID(
         label = "Android Client",
         userAgent = "com.google.android.youtube/19.20.35 (Linux; U; Android 14; vi_VN)"
-    ),
-    TVHTML5(
-        label = "TVHTML5 Fallback",
-        userAgent = "Mozilla/5.0 (SMART-TV; Linux; Tizen 6.0) AppleWebKit/538.1 (KHTML, like Gecko)"
     )
 }
 

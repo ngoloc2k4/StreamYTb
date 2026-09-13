@@ -137,7 +137,7 @@ fun FullPlayer(
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Thu nhỏ",
+                        contentDescription = stringResource(R.string.player_collapse_desc),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(32.dp)
                     )
@@ -163,39 +163,36 @@ fun FullPlayer(
                     )
                 }
 
-                // Client Selector Chip (iOS Mock / Web / Android / TVHTML5)
+                // Options menu (Audio toggle, Client Spoof)
                 Box {
-                    Surface(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable { showClientMenu = true }
-                            .testTag("client_spoof_selector"),
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        tonalElevation = 2.dp
+                    IconButton(
+                        onClick = { showClientMenu = true },
+                        modifier = Modifier.testTag("full_player_more_options")
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = playerState.activeClient.label,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = stringResource(R.string.player_client_spoof_desc),
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(R.string.player_client_spoof_desc),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
 
                     DropdownMenu(
                         expanded = showClientMenu,
                         onDismissRequest = { showClientMenu = false }
                     ) {
+                        DropdownMenuItem(
+                            text = { Text(if (playerState.isAudioOnlyMode) stringResource(R.string.player_audio_chip_off) else stringResource(R.string.player_audio_chip_on)) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = if (playerState.isAudioOnlyMode) Icons.Default.Videocam else Icons.Default.Headphones,
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                onToggleAudioMode()
+                                showClientMenu = false
+                            }
+                        )
                         ClientType.values().forEach { client ->
                             DropdownMenuItem(
                                 text = {

@@ -38,6 +38,12 @@
     <string name="music_hero_desc">Pure Opus / M4A decoding, saves 50% battery and keeps RAM &lt; 90MB on lockscreen.</string>
     <string name="music_quick_picks_title">Quick Picks for You</string>
     <string name="music_trending_title">Trending Music Tracks</string>
+    <string name="music_category_all">All</string>
+    <string name="music_category_vpop">V-Pop</string>
+    <string name="music_category_lofi">Lofi &amp; Chill</string>
+    <string name="music_category_acoustic">Acoustic</string>
+    <string name="music_category_edm">EDM</string>
+    <string name="music_category_ballad">Ballad</string>
 
     <!-- Subscriptions Screen -->
     <string name="subscriptions_title">Subscribed Channels (%1$d)</string>
@@ -74,6 +80,7 @@
     <string name="search_no_results">No matching results found for \"%1$s\"</string>
 
     <!-- Player (FullPlayer & MiniPlayer) -->
+    <string name="player_collapse_desc">Collapse player</string>
     <string name="player_select_media_hint">Select a video or song to start playing</string>
     <string name="player_playing_audio_mode">PLAYING AUDIO (SAVING RAM)</string>
     <string name="player_playing_video_mode">PLAYING VIDEO</string>

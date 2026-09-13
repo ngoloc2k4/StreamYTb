@@ -15,12 +15,17 @@ import java.util.concurrent.TimeUnit
 
 class InnerTubeEngine {
 
+    companion object {
+        const val INNERTUBE_API_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+        const val BASE_URL = "https://www.youtube.com/youtubei/v1"
+    }
+
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(20, TimeUnit.SECONDS)
         .build()
 
-    private var activeClientType: ClientType = ClientType.IOS
+    private var activeClientType: ClientType = ClientType.ANDROID_VR
 
     fun getActiveClient(): ClientType = activeClientType
 
@@ -34,6 +39,26 @@ class InnerTubeEngine {
     fun buildClientContext(client: ClientType): JSONObject {
         val clientObj = JSONObject()
         when (client) {
+            ClientType.ANDROID_VR -> {
+                clientObj.put("clientName", "ANDROID_VR")
+                clientObj.put("clientVersion", "1.56.21")
+                clientObj.put("deviceMake", "Oculus")
+                clientObj.put("deviceModel", "Quest 3")
+                clientObj.put("hl", "vi")
+                clientObj.put("gl", "VN")
+            }
+            ClientType.TVHTML5 -> {
+                clientObj.put("clientName", "TVHTML5")
+                clientObj.put("clientVersion", "7.20240501.08.00")
+                clientObj.put("hl", "vi")
+                clientObj.put("gl", "VN")
+            }
+            ClientType.WEB -> {
+                clientObj.put("clientName", "WEB")
+                clientObj.put("clientVersion", "2.20260911.01.00")
+                clientObj.put("hl", "vi")
+                clientObj.put("gl", "VN")
+            }
             ClientType.IOS -> {
                 clientObj.put("clientName", "IOS")
                 clientObj.put("clientVersion", "19.20.1")
@@ -44,22 +69,10 @@ class InnerTubeEngine {
                 clientObj.put("hl", "vi")
                 clientObj.put("gl", "VN")
             }
-            ClientType.WEB -> {
-                clientObj.put("clientName", "WEB")
-                clientObj.put("clientVersion", "2.20240501.01.00")
-                clientObj.put("hl", "vi")
-                clientObj.put("gl", "VN")
-            }
             ClientType.ANDROID -> {
                 clientObj.put("clientName", "ANDROID")
                 clientObj.put("clientVersion", "19.20.35")
                 clientObj.put("androidSdkVersion", 34)
-                clientObj.put("hl", "vi")
-                clientObj.put("gl", "VN")
-            }
-            ClientType.TVHTML5 -> {
-                clientObj.put("clientName", "TVHTML5")
-                clientObj.put("clientVersion", "7.20240501.08.00")
                 clientObj.put("hl", "vi")
                 clientObj.put("gl", "VN")
             }
@@ -78,36 +91,41 @@ class InnerTubeEngine {
         headers["Content-Type"] = "application/json"
 
         when (client) {
+            ClientType.ANDROID_VR -> {
+                headers["X-YouTube-Client-Name"] = "28"
+                headers["X-YouTube-Client-Version"] = "1.56.21"
+            }
+            ClientType.TVHTML5 -> {
+                headers["X-YouTube-Client-Name"] = "85"
+                headers["X-YouTube-Client-Version"] = "7.20240501.08.00"
+            }
+            ClientType.WEB -> {
+                headers["X-YouTube-Client-Name"] = "1"
+                headers["X-YouTube-Client-Version"] = "2.20260911.01.00"
+            }
             ClientType.IOS -> {
                 headers["X-YouTube-Client-Name"] = "5"
                 headers["X-YouTube-Client-Version"] = "19.20.1"
                 headers["X-YouTube-Device"] = "iPhone14,5"
             }
-            ClientType.WEB -> {
-                headers["X-YouTube-Client-Name"] = "1"
-                headers["X-YouTube-Client-Version"] = "2.20240501.01.00"
-            }
             ClientType.ANDROID -> {
                 headers["X-YouTube-Client-Name"] = "3"
                 headers["X-YouTube-Client-Version"] = "19.20.35"
-            }
-            ClientType.TVHTML5 -> {
-                headers["X-YouTube-Client-Name"] = "85"
-                headers["X-YouTube-Client-Version"] = "7.20240501.08.00"
             }
         }
         return headers
     }
 
     /**
-     * Fallback resolution when encountering 403 or playback restrictions.
+     * Fallback resolution when encountering playback restrictions.
      */
     fun triggerFallback(): ClientType {
         activeClientType = when (activeClientType) {
-            ClientType.IOS -> ClientType.TVHTML5
-            ClientType.TVHTML5 -> ClientType.ANDROID
-            ClientType.ANDROID -> ClientType.WEB
-            ClientType.WEB -> ClientType.IOS
+            ClientType.ANDROID_VR -> ClientType.TVHTML5
+            ClientType.TVHTML5 -> ClientType.WEB
+            ClientType.WEB -> ClientType.ANDROID_VR
+            ClientType.IOS -> ClientType.ANDROID_VR
+            ClientType.ANDROID -> ClientType.ANDROID_VR
         }
         return activeClientType
     }
@@ -134,7 +152,7 @@ class InnerTubeEngine {
             }
 
             val request = Request.Builder()
-                .url("https://www.youtube.com/youtubei/v1/player")
+                .url("$BASE_URL/player?key=$INNERTUBE_API_KEY")
                 .post(requestBody.toString().toRequestBody("application/json; charset=utf-8".toMediaType()))
                 .apply {
                     buildClientHeaders(client).forEach { (k, v) -> addHeader(k, v) }
@@ -143,7 +161,7 @@ class InnerTubeEngine {
 
             val response = okHttpClient.newCall(request).execute()
             if (!response.isSuccessful) {
-                if (client == ClientType.IOS) {
+                if (client != ClientType.TVHTML5) {
                     return@withContext fetchVideoStreams(videoId, ClientType.TVHTML5)
                 }
                 return@withContext Result.failure(Exception("HTTP ${response.code}"))
@@ -155,7 +173,7 @@ class InnerTubeEngine {
             val playabilityStatus = json.optJSONObject("playabilityStatus")
             val status = playabilityStatus?.optString("status")
             if (status != "OK") {
-                if (client == ClientType.IOS) {
+                if (client != ClientType.TVHTML5) {
                     return@withContext fetchVideoStreams(videoId, ClientType.TVHTML5)
                 }
                 val reason = playabilityStatus?.optString("reason", "Playability status: $status")
@@ -183,6 +201,21 @@ class InnerTubeEngine {
             var chosenAudioUrl = ""
             var chosenVideoUrl = ""
 
+            // Combined progressive formats (Video + Audio muxed together, e.g. itag 18 360p / 22 720p)
+            val formats = streamingData?.optJSONArray("formats")
+            if (formats != null) {
+                for (i in 0 until formats.length()) {
+                    val fmt = formats.getJSONObject(i)
+                    val url = fmt.optString("url", "")
+                    if (url.isNotEmpty()) {
+                        chosenVideoUrl = url
+                        if (chosenAudioUrl.isEmpty()) chosenAudioUrl = url
+                        break
+                    }
+                }
+            }
+
+            // Adaptive formats (Highest quality audio AAC / Opus, and HD video)
             val adaptiveFormats = streamingData?.optJSONArray("adaptiveFormats")
             if (adaptiveFormats != null) {
                 var highestAudioBitrate = 0
@@ -202,24 +235,11 @@ class InnerTubeEngine {
                 }
             }
 
-            val formats = streamingData?.optJSONArray("formats")
-            if (formats != null && chosenVideoUrl.isEmpty()) {
-                for (i in 0 until formats.length()) {
-                    val fmt = formats.getJSONObject(i)
-                    val url = fmt.optString("url", "")
-                    if (url.isNotEmpty()) {
-                        chosenVideoUrl = url
-                        if (chosenAudioUrl.isEmpty()) chosenAudioUrl = url
-                        break
-                    }
-                }
-            }
-
-            val finalStreamUrl = hlsUrl.ifEmpty { chosenVideoUrl.ifEmpty { chosenAudioUrl } }
+            val finalStreamUrl = chosenVideoUrl.ifEmpty { hlsUrl.ifEmpty { chosenAudioUrl } }
             val finalAudioUrl = chosenAudioUrl.ifEmpty { hlsUrl.ifEmpty { finalStreamUrl } }
 
             if (finalStreamUrl.isEmpty() && finalAudioUrl.isEmpty()) {
-                if (client == ClientType.IOS) {
+                if (client != ClientType.TVHTML5) {
                     return@withContext fetchVideoStreams(videoId, ClientType.TVHTML5)
                 }
                 return@withContext Result.failure(Exception("No direct stream URL available"))
@@ -244,7 +264,7 @@ class InnerTubeEngine {
                 )
             )
         } catch (e: Exception) {
-            if (client == ClientType.IOS) {
+            if (client != ClientType.TVHTML5) {
                 fetchVideoStreams(videoId, ClientType.TVHTML5)
             } else {
                 Result.failure(e)
@@ -266,7 +286,7 @@ class InnerTubeEngine {
             }
 
             val request = Request.Builder()
-                .url("https://www.youtube.com/youtubei/v1/search")
+                .url("$BASE_URL/search?key=$INNERTUBE_API_KEY")
                 .post(requestBody.toString().toRequestBody("application/json; charset=utf-8".toMediaType()))
                 .apply {
                     buildClientHeaders(ClientType.WEB).forEach { (k, v) -> addHeader(k, v) }
@@ -290,6 +310,7 @@ class InnerTubeEngine {
 
     /**
      * Fetches trending or home feed videos via /browse endpoint.
+     * Automatically falls back to popular Vietnamese search query if browse endpoint fails.
      */
     suspend fun fetchTrending(browseId: String = "FEtrending"): List<StreamVideo> = withContext(Dispatchers.IO) {
         try {
@@ -299,7 +320,7 @@ class InnerTubeEngine {
             }
 
             val request = Request.Builder()
-                .url("https://www.youtube.com/youtubei/v1/browse")
+                .url("$BASE_URL/browse?key=$INNERTUBE_API_KEY")
                 .post(requestBody.toString().toRequestBody("application/json; charset=utf-8".toMediaType()))
                 .apply {
                     buildClientHeaders(ClientType.WEB).forEach { (k, v) -> addHeader(k, v) }
@@ -307,17 +328,34 @@ class InnerTubeEngine {
                 .build()
 
             val response = okHttpClient.newCall(request).execute()
-            if (!response.isSuccessful) return@withContext getSampleMediaCatalog()
+            if (response.isSuccessful) {
+                val body = response.body?.string()
+                if (!body.isNullOrEmpty()) {
+                    val json = JSONObject(body)
+                    val results = mutableListOf<StreamVideo>()
+                    extractVideoRenderers(json, results)
+                    if (results.isNotEmpty()) return@withContext results
+                }
+            }
 
-            val body = response.body?.string() ?: return@withContext getSampleMediaCatalog()
-            val json = JSONObject(body)
-
-            val results = mutableListOf<StreamVideo>()
-            extractVideoRenderers(json, results)
-
-            if (results.isNotEmpty()) results else getSampleMediaCatalog()
+            // Fallback: search popular trending videos
+            val fallbackResults = searchVideos("trending việt nam")
+            if (fallbackResults.isNotEmpty()) fallbackResults else getSampleMediaCatalog()
         } catch (e: Exception) {
-            getSampleMediaCatalog()
+            val fallbackResults = searchVideos("trending việt nam")
+            if (fallbackResults.isNotEmpty()) fallbackResults else getSampleMediaCatalog()
+        }
+    }
+
+    /**
+     * Fetches real YouTube music tracks for Music screen.
+     */
+    suspend fun fetchMusic(genreQuery: String = "nhạc trẻ vpop mới nhất"): List<StreamVideo> = withContext(Dispatchers.IO) {
+        val tracks = searchVideos(genreQuery)
+        if (tracks.isNotEmpty()) {
+            tracks.map { it.copy(isAudioOnly = true, category = "Âm nhạc") }
+        } else {
+            getSampleMediaCatalog().filter { it.isAudioOnly || it.category == "Âm nhạc" || it.category == "Lofi" }
         }
     }
 
@@ -420,137 +458,105 @@ class InnerTubeEngine {
     }
 
     /**
-     * Curated catalog of media videos and songs used for offline resilience.
+     * Curated catalog of media videos and songs with real YouTube IDs for offline resilience.
      */
     fun getSampleMediaCatalog(): List<StreamVideo> {
         return listOf(
             StreamVideo(
-                id = "vn_music_01",
-                title = "Đưa Nhau Đi Trốn - Chill Acoustic Live Session",
-                channelTitle = "Den Vau Official",
-                channelId = "den_vau_channel",
-                thumbnailUrl = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
-                durationSec = 245,
-                viewCountText = "48M lượt xem",
-                publishedText = "2 ngày trước",
-                description = "Bản thu thanh mộc acoustic với đàn guitar và âm thanh tự nhiên của núi rừng Tây Bắc.",
-                streamUrl = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                tags = listOf("Âm nhạc", "V-Pop", "Acoustic", "Chill", "Rap Việt"),
+                id = "2N4_cW7ZlI8",
+                title = "Đen - Nấu ăn cho em ft. PiaLinh (M/V)",
+                channelTitle = "Đen Vâu Official",
+                channelId = "UCm22OUnhwi5hGqSg_F3i5gQ",
+                thumbnailUrl = "https://i.ytimg.com/vi/2N4_cW7ZlI8/hqdefault.jpg",
+                durationSec = 265,
+                viewCountText = "72M lượt xem",
+                publishedText = "1 năm trước",
+                description = "Bản thu âm thanh bình dị dành tặng các em nhỏ vùng cao.",
+                streamUrl = "",
+                audioStreamUrl = "",
+                tags = listOf("Âm nhạc", "V-Pop", "Acoustic", "Đen Vâu"),
                 isAudioOnly = false,
                 category = "Âm nhạc"
             ),
             StreamVideo(
-                id = "vn_music_02",
-                title = "See Tình - Speed Up Tropical Remix",
-                channelTitle = "Hoàng Thùy Linh Records",
-                channelId = "htl_channel",
-                thumbnailUrl = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&auto=format&fit=crop&q=80",
-                durationSec = 192,
-                viewCountText = "120M lượt xem",
-                publishedText = "1 tuần trước",
-                description = "Giai điệu lôi cuốn kết hợp nhạc cụ dân tộc hiện đại, lan tỏa khắp châu Á.",
-                streamUrl = "https://storage.googleapis.com/exoplayer-test-media-1/mp4/dizzy-with-tx3g.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-                tags = listOf("Âm nhạc", "V-Pop", "Dance", "Remix", "Trending"),
+                id = "b09U5R_M63s",
+                title = "Sơn Tùng M-TP | ĐỪNG LÀM TRÁI TIM ANH ĐAU | OFFICIAL MUSIC VIDEO",
+                channelTitle = "Sơn Tùng M-TP Official",
+                channelId = "UClyArs3IZKA_5pOG_tB_e9w",
+                thumbnailUrl = "https://i.ytimg.com/vi/b09U5R_M63s/hqdefault.jpg",
+                durationSec = 330,
+                viewCountText = "95M lượt xem",
+                publishedText = "3 tháng trước",
+                description = "Ca khúc âm nhạc mang giai điệu tươi sáng, ngọt ngào của Sơn Tùng M-TP.",
+                streamUrl = "",
+                audioStreamUrl = "",
+                tags = listOf("Âm nhạc", "V-Pop", "Trending", "Sơn Tùng M-TP"),
                 isAudioOnly = false,
                 category = "Âm nhạc"
             ),
             StreamVideo(
-                id = "lofi_01",
-                title = "Lofi Hip Hop Beats to Relax / Study to [24/7 Deep Focus]",
-                channelTitle = "Lofi Girl Vietnam",
-                channelId = "lofigirl_vn",
-                thumbnailUrl = "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
+                id = "jfKfPfyJRdk",
+                title = "lofi hip hop radio 📚 - beats to relax/study to",
+                channelTitle = "Lofi Girl",
+                channelId = "UCSJ4gkVC6NrvII8umztf0Ow",
+                thumbnailUrl = "https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg",
                 durationSec = 360,
-                viewCountText = "2.4M lượt xem",
-                publishedText = "Hôm nay",
-                description = "Không gian âm thanh thư giãn giúp tập trung làm việc, học tập ban đêm và giảm căng thẳng.",
-                streamUrl = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+                viewCountText = "68M lượt xem",
+                publishedText = "Trực tiếp",
+                description = "Giai điệu lofi thư giãn giúp tập trung làm việc, học tập ban đêm và giảm căng thẳng.",
+                streamUrl = "",
+                audioStreamUrl = "",
                 tags = listOf("Lofi", "Study", "Chill", "Beats", "Thư giãn"),
                 isAudioOnly = true,
                 category = "Lofi"
             ),
             StreamVideo(
-                id = "tech_01",
-                title = "Kiến trúc Media3 & Jetpack Compose: Tối ưu 60FPS trên thiết bị RAM thấp",
-                channelTitle = "Android Dev VN",
-                channelId = "android_dev_vn",
-                thumbnailUrl = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
-                durationSec = 480,
-                viewCountText = "35K lượt xem",
-                publishedText = "3 ngày trước",
-                description = "Phân tích kỹ thuật tách rời ExoPlayer vào Background Service, giảm thiểu Recomposition và tránh OOM.",
-                streamUrl = "https://storage.googleapis.com/exoplayer-test-media-1/mp4/android-screens-25s.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-                tags = listOf("Lập trình", "Android", "Kotlin", "Công nghệ", "Tối ưu"),
-                isAudioOnly = false,
-                category = "Lập trình"
-            ),
-            StreamVideo(
-                id = "podcast_01",
-                title = "Hành trình Xây dựng Sản phẩm Open-Source Độc lập",
-                channelTitle = "The Saigon Podcast",
-                channelId = "saigon_podcast",
-                thumbnailUrl = "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=600&auto=format&fit=crop&q=80",
-                durationSec = 520,
-                viewCountText = "98K lượt xem",
-                publishedText = "5 ngày trước",
-                description = "Trò chuyện cùng các kỹ sư phần mềm về quyền riêng tư dữ liệu, tự do mã nguồn mở và tương lai media.",
-                streamUrl = "https://storage.googleapis.com/exoplayer-test-media-1/mp4/android-screens-10s.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-                tags = listOf("Podcast", "Công nghệ", "Khởi nghiệp", "Tri thức"),
-                isAudioOnly = true,
-                category = "Podcast"
-            ),
-            StreamVideo(
-                id = "vn_music_03",
-                title = "Nấu Ăn Cho Em - Bản Thu Đồng Quê Mộc",
-                channelTitle = "Den Vau Official",
-                channelId = "den_vau_channel",
-                thumbnailUrl = "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=600&auto=format&fit=crop&q=80",
-                durationSec = 260,
-                viewCountText = "65M lượt xem",
-                publishedText = "3 tuần trước",
-                description = "Âm nhạc sưởi ấm tâm hồn dành cho các em nhỏ vùng cao Điện Biên.",
-                streamUrl = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
-                tags = listOf("Âm nhạc", "V-Pop", "Ý nghĩa", "Acoustic"),
+                id = "H5v3kku4y6Q",
+                title = "Mascara - Chillies x B Ray (Official Music Video)",
+                channelTitle = "Chillies",
+                channelId = "UCm_xO8wB8BwD5U9a2N4e0Aw",
+                thumbnailUrl = "https://i.ytimg.com/vi/H5v3kku4y6Q/hqdefault.jpg",
+                durationSec = 285,
+                viewCountText = "60M lượt xem",
+                publishedText = "2 năm trước",
+                description = "Ca khúc đầy cảm xúc kết hợp giữa Chillies và B Ray.",
+                streamUrl = "",
+                audioStreamUrl = "",
+                tags = listOf("Âm nhạc", "V-Pop", "Chillies", "Indie"),
                 isAudioOnly = false,
                 category = "Âm nhạc"
             ),
             StreamVideo(
-                id = "coding_02",
-                title = "Xây dựng Thuật toán Recommendation Engine Cục bộ với SQLite",
-                channelTitle = "Android Dev VN",
-                channelId = "android_dev_vn",
-                thumbnailUrl = "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
-                durationSec = 390,
-                viewCountText = "22K lượt xem",
-                publishedText = "1 tuần trước",
-                description = "Giải thuật tính trọng số WatchTime, tỷ lệ bỏ qua và hệ số phân rã thời gian Decay Factor.",
-                streamUrl = "https://storage.googleapis.com/exoplayer-test-media-1/mp4/dizzy-with-tx3g.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
-                tags = listOf("Lập trình", "Thuật toán", "Database", "Room", "AI Cục bộ"),
-                isAudioOnly = false,
-                category = "Lập trình"
-            ),
-            StreamVideo(
-                id = "music_trend_04",
-                title = "Cắt Đôi Nỗi Sầu - Vinahouse Club Mix 2026",
-                channelTitle = "Tăng Duy Tân Records",
-                channelId = "tangduytan_channel",
-                thumbnailUrl = "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80",
-                durationSec = 210,
-                viewCountText = "82M lượt xem",
-                publishedText = "2 tuần trước",
-                description = "Bản phối sôi động dẫn đầu các bảng xếp hạng âm nhạc điện tử và vũ trường.",
-                streamUrl = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-                audioStreamUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3",
-                tags = listOf("Âm nhạc", "Vinahouse", "EDM", "Remix", "Trending"),
+                id = "7C2z4GqqS5E",
+                title = "Bước Qua Nhau - Vũ. (Official MV)",
+                channelTitle = "Vũ. Official",
+                channelId = "UCvV7U5FwF6_rT4s7E9sT8xA",
+                thumbnailUrl = "https://i.ytimg.com/vi/7C2z4GqqS5E/hqdefault.jpg",
+                durationSec = 257,
+                viewCountText = "110M lượt xem",
+                publishedText = "2 năm trước",
+                description = "Bản tình ca da diết về những ký ức tuổi trẻ của Hoàng tử Indie Vũ.",
+                streamUrl = "",
+                audioStreamUrl = "",
+                tags = listOf("Âm nhạc", "Ballad", "Indie", "Vũ"),
                 isAudioOnly = true,
                 category = "Âm nhạc"
+            ),
+            StreamVideo(
+                id = "dQw4w9WgXcQ",
+                title = "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+                channelTitle = "Rick Astley",
+                channelId = "UCuAXFkgsw1L7xaCfnd5JJOw",
+                thumbnailUrl = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+                durationSec = 212,
+                viewCountText = "1.5B lượt xem",
+                publishedText = "14 năm trước",
+                description = "The official video for Never Gonna Give You Up by Rick Astley.",
+                streamUrl = "",
+                audioStreamUrl = "",
+                tags = listOf("Music", "Pop", "Classic", "80s"),
+                isAudioOnly = false,
+                category = "All"
             )
         )
     }
@@ -558,44 +564,36 @@ class InnerTubeEngine {
     fun getSampleChannels(): List<StreamChannel> {
         return listOf(
             StreamChannel(
-                id = "den_vau_channel",
-                title = "Den Vau Official",
-                thumbnailUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-                subscriberCountText = "5.1M người đăng ký",
+                id = "UCm22OUnhwi5hGqSg_F3i5gQ",
+                title = "Đen Vâu Official",
+                thumbnailUrl = "https://i.ytimg.com/vi/2N4_cW7ZlI8/hqdefault.jpg",
+                subscriberCountText = "5.2M người đăng ký",
                 description = "Kênh phát hành âm nhạc chính thức của Đen.",
                 customGroup = "Âm nhạc"
             ),
             StreamChannel(
-                id = "htl_channel",
-                title = "Hoàng Thùy Linh Records",
-                thumbnailUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80",
-                subscriberCountText = "1.8M người đăng ký",
-                description = "Kênh chính thức phát hành các dự án âm nhạc đương đại.",
+                id = "UClyArs3IZKA_5pOG_tB_e9w",
+                title = "Sơn Tùng M-TP Official",
+                thumbnailUrl = "https://i.ytimg.com/vi/b09U5R_M63s/hqdefault.jpg",
+                subscriberCountText = "10.4M người đăng ký",
+                description = "Kênh YouTube chính thức của Sơn Tùng M-TP.",
                 customGroup = "Âm nhạc"
             ),
             StreamChannel(
-                id = "android_dev_vn",
-                title = "Android Dev VN",
-                thumbnailUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-                subscriberCountText = "150K người đăng ký",
-                description = "Kênh chia sẻ kỹ thuật lập trình Android hiện đại, Clean Architecture và Media3.",
-                customGroup = "Lập trình"
-            ),
-            StreamChannel(
-                id = "lofigirl_vn",
-                title = "Lofi Girl Vietnam",
-                thumbnailUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
-                subscriberCountText = "850K người đăng ký",
-                description = "Những bản nhạc không lời nhẹ nhàng dành cho tâm hồn và sự tập trung.",
+                id = "UCSJ4gkVC6NrvII8umztf0Ow",
+                title = "Lofi Girl",
+                thumbnailUrl = "https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg",
+                subscriberCountText = "14.2M người đăng ký",
+                description = "Peaceful lofi hip hop radio beats to relax, study and chill.",
                 customGroup = "Thư giãn"
             ),
             StreamChannel(
-                id = "saigon_podcast",
-                title = "The Saigon Podcast",
-                thumbnailUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-                subscriberCountText = "320K người đăng ký",
-                description = "Góc nhìn công nghệ, đời sống và văn hóa số.",
-                customGroup = "Tin tức"
+                id = "UCm_xO8wB8BwD5U9a2N4e0Aw",
+                title = "Chillies",
+                thumbnailUrl = "https://i.ytimg.com/vi/H5v3kku4y6Q/hqdefault.jpg",
+                subscriberCountText = "1.1M người đăng ký",
+                description = "Official YouTube Channel of Chillies Band Vietnam.",
+                customGroup = "Âm nhạc"
             )
         )
     }

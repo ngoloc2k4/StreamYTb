@@ -34,6 +34,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _feedItems = MutableStateFlow<List<FeedItem>>(emptyList())
     val feedItems: StateFlow<List<FeedItem>> = _feedItems.asStateFlow()
 
+    private val _musicTracks = MutableStateFlow<List<StreamVideo>>(emptyList())
+    val musicTracks: StateFlow<List<StreamVideo>> = _musicTracks.asStateFlow()
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
@@ -71,6 +74,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         refreshFeed()
+        refreshMusic()
     }
 
     fun refreshFeed() {
@@ -82,14 +86,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun playVideo(video: StreamVideo, audioOnly: Boolean = false) {
-        val queue = repository.getAllVideos()
-        playerManager.playMedia(video, audioOnly, queue)
+    fun refreshMusic(genreQuery: String = "nhạc trẻ vpop mới nhất") {
+        viewModelScope.launch {
+            val tracks = repository.getMusicVideos(forceRefresh = true)
+            _musicTracks.value = tracks
+        }
     }
 
-    fun playMusicTrack(video: StreamVideo) {
-        val queue = repository.getMusicVideos()
-        playerManager.playMedia(video, true, queue)
+    fun playVideo(video: StreamVideo, audioOnly: Boolean = false, queue: List<StreamVideo> = emptyList()) {
+        val effectiveQueue = if (queue.isNotEmpty()) {
+            queue
+        } else {
+            val currentFeedVideos = _feedItems.value.map { it.video }
+            if (currentFeedVideos.any { it.id == video.id }) currentFeedVideos else listOf(video)
+        }
+        playerManager.playMedia(video, audioOnly, effectiveQueue)
+    }
+
+    fun playMusicTrack(video: StreamVideo, queue: List<StreamVideo> = emptyList()) {
+        val effectiveQueue = if (queue.isNotEmpty()) {
+            queue
+        } else {
+            if (_musicTracks.value.any { it.id == video.id }) _musicTracks.value else listOf(video)
+        }
+        playerManager.playMedia(video, true, effectiveQueue)
     }
 
     fun togglePlayPause() {

@@ -34,35 +34,24 @@ class MediaRepository(private val context: Context) {
     val watchHistory: Flow<List<WatchHistoryEntity>> = watchHistoryDao.getAllWatchHistory()
     val preferences: Flow<List<UserPreferenceEntity>> = userPreferenceDao.getAllPreferences()
 
-    init {
-        // Pre-populate initial subscriptions if empty so the app has working subscriptions on first run
-        CoroutineScope(Dispatchers.IO).launch {
-            val existing = subscriptionDao.getAllSubscriptions().first()
-            if (existing.isEmpty()) {
-                val sampleChannels = innerTubeEngine.getSampleChannels()
-                sampleChannels.take(3).forEach { ch ->
-                    subscriptionDao.insertSubscription(
-                        SubscriptionEntity(
-                            channelId = ch.id,
-                            title = ch.title,
-                            thumbnailUrl = ch.thumbnailUrl,
-                            customGroup = ch.customGroup,
-                            subscribedAt = System.currentTimeMillis()
-                        )
-                    )
-                    recSysEngine.recordSubscriptionInteraction(ch.title, true)
-                }
-            }
-        }
-    }
+    private var cachedMusicVideos: List<StreamVideo> = emptyList()
 
     fun getAllVideos(): List<StreamVideo> = innerTubeEngine.getSampleMediaCatalog()
 
     fun getAllChannels(): List<StreamChannel> = innerTubeEngine.getSampleChannels()
 
-    fun getMusicVideos(): List<StreamVideo> {
-        return innerTubeEngine.getSampleMediaCatalog().filter {
-            it.isAudioOnly || it.category == "Âm nhạc" || it.category == "Lofi"
+    suspend fun getMusicVideos(forceRefresh: Boolean = false): List<StreamVideo> {
+        return withContext(Dispatchers.IO) {
+            if (cachedMusicVideos.isNotEmpty() && !forceRefresh) {
+                return@withContext cachedMusicVideos
+            }
+            val fetched = innerTubeEngine.fetchMusic()
+            if (fetched.isNotEmpty()) {
+                cachedMusicVideos = fetched
+                fetched
+            } else {
+                getAllVideos().filter { it.isAudioOnly || it.category == "Âm nhạc" || it.category == "Lofi" }
+            }
         }
     }
 
@@ -152,7 +141,18 @@ class MediaRepository(private val context: Context) {
         return withContext(Dispatchers.IO) {
             if (video.streamUrl.isEmpty() || !video.streamUrl.startsWith("http")) {
                 val result = innerTubeEngine.fetchVideoStreams(video.id)
-                result.getOrNull() ?: video
+                val resolved = result.getOrNull()
+                if (resolved != null && (resolved.streamUrl.isNotEmpty() || resolved.audioStreamUrl.isNotEmpty())) {
+                    resolved.copy(
+                        title = video.title.ifEmpty { resolved.title },
+                        channelTitle = video.channelTitle.ifEmpty { resolved.channelTitle },
+                        thumbnailUrl = video.thumbnailUrl.ifEmpty { resolved.thumbnailUrl },
+                        tags = if (video.tags.isNotEmpty()) video.tags else resolved.tags,
+                        isAudioOnly = video.isAudioOnly || resolved.isAudioOnly
+                    )
+                } else {
+                    video
+                }
             } else {
                 video
             }
