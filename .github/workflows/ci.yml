@@ -47,32 +47,39 @@ jobs:
     - name: Build Debug and Release APKs with R8
       run: gradle assembleDebug assembleRelease --stacktrace
 
-    - name: Verify APK Size
+    - name: Prepare Individual APK Outputs
       run: |
-        echo "=== Generated APKs ==="
-        find app/build/outputs/apk -name "*.apk" -exec ls -lh {} +
+        echo "=== Formatting Individual APK Outputs ==="
+        mkdir -p dist
+        find app/build/outputs/apk -name "*.apk" | while read -r apk; do
+          filename=$(basename "$apk")
+          clean_name="StreamYTb-${filename#app-}"
+          cp "$apk" "dist/$clean_name"
+          echo "Output: dist/$clean_name ($(ls -lh "dist/$clean_name" | awk '{print $5}'))"
+        done
 
-    - name: Upload APK Artifacts
+    - name: Upload arm64 Release APK
       uses: actions/upload-artifact@v4
       with:
-        name: streamytb-apks
-        path: |
-          app/build/outputs/apk/release/app-release.apk
-          app/build/outputs/apk/debug/app-debug.apk
+        name: StreamYTb-arm64-v8a-release.apk
+        path: dist/*release.apk
+
+    - name: Upload arm64 Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: StreamYTb-arm64-v8a-debug.apk
+        path: dist/*debug.apk
 
     - name: Publish Beta Release
       if: github.ref == 'refs/heads/main'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "=== Uploading APK Assets to Official Beta Release ==="
+        echo "=== Uploading Standalone APK Assets to Official Beta Release ==="
         for TAG in "v1.0.0-beta.1" "v1.0.0-beta"; do
           if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Uploading APKs to $TAG..."
-            gh release upload "$TAG" \
-              app/build/outputs/apk/release/app-release.apk \
-              app/build/outputs/apk/debug/app-debug.apk \
-              --clobber || true
+            echo "Uploading standalone APKs to $TAG..."
+            gh release upload "$TAG" dist/*.apk --clobber || true
             gh release view "$TAG"
           fi
         done
