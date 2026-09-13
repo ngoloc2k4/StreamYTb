@@ -60,6 +60,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -316,6 +317,12 @@ private fun PlayerMainContent(
             contentAlignment = Alignment.Center
         ) {
             if (!playerState.isAudioOnlyMode && exoPlayer != null) {
+                DisposableEffect(exoPlayer) {
+                    onDispose {
+                        exoPlayer.clearVideoSurface()
+                    }
+                }
+
                 AndroidView(
                     factory = { ctx ->
                         val view = LayoutInflater.from(ctx).inflate(R.layout.player_texture_view, null, false) as PlayerView
@@ -325,13 +332,17 @@ private fun PlayerMainContent(
                         }
                     },
                     update = { view ->
-                        view.player = exoPlayer
+                        if (view.player != exoPlayer) {
+                            view.player = exoPlayer
+                        }
                     },
                     onReset = { view ->
                         view.player = null
+                        exoPlayer.clearVideoSurface()
                     },
                     onRelease = { view ->
                         view.player = null
+                        exoPlayer.clearVideoSurface()
                     },
                     modifier = Modifier.fillMaxSize()
                 )
